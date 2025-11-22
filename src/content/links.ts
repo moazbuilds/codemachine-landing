@@ -32,9 +32,10 @@ export const starMetrics: readonly StarMetric[] = [
 
 /**
  * Helper function to generate fallback copy when GitHub star fetch fails.
- * @param repoName - The repository name to display in fallback copy
- * @returns Fallback text for the telemetry badge
+ * @param repoName - Reserved for future repo-specific copy
+ * @returns Fallback text (defaults to "100+ Stars")
  */
 export function buildFallbackStarCopy(repoName: string): string {
-  return `${repoName} • Star count unavailable`
+  void repoName
+  return '100+ Stars'
 }
