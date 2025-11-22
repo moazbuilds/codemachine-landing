@@ -1,0 +1,148 @@
+---
+title: CodeMachine Landing Page - Component Architecture
+description: Component diagram showing ExperienceShell, content modules, contexts, and future section slots
+iteration: I1.T4
+last_updated: 2025-11-22
+---
+
+flowchart TB
+    %% ============================================================================
+    %% ENTRY POINT & SHELL LAYER
+    %% ============================================================================
+
+    App["App.tsx<br/><code>src/App.tsx</code><br/>Main entry - orchestrates sections"]
+
+    subgraph Shell["ExperienceShell Layer"]
+        direction TB
+        ExperienceShell["ExperienceShell<br/><code>src/components/ExperienceShell/index.tsx</code><br/>Layout orchestrator + theming"]
+
+        subgraph Providers["Context Providers"]
+            direction LR
+            FeatureFlagCtx["FeatureFlagProvider<br/><code>src/components/ExperienceShell/FeatureFlagContext.tsx</code><br/>Feature toggle state"]
+            ScrollRevealCtx["ScrollRevealProvider<br/><code>src/components/ExperienceShell/ScrollRevealContext.tsx</code><br/>Scroll animation orchestration"]
+        end
+
+        subgraph ShellUI["Shell UI Components"]
+            direction LR
+            NavBar["NavigationBar<br/><code>src/components/NavigationBar/index.tsx</code><br/>Sticky header with doc/GitHub links"]
+            BgLayers["BackgroundLayers<br/><code>src/components/ExperienceShell/BackgroundLayers.tsx</code><br/>Noise textures + ambient glows"]
+        end
+
+        ExperienceShell --> Providers
+        ExperienceShell --> ShellUI
+    end
+
+    %% ============================================================================
+    %% CONTENT SYSTEM (DATA SOURCE)
+    %% ============================================================================
+
+    subgraph ContentSystem["Content System (Data Source)"]
+        direction TB
+        ContentBarrel["@/content/index.ts<br/><code>src/content/index.ts</code><br/>Barrel export - single source of truth"]
+
+        subgraph ContentModules["Content Modules"]
+            direction LR
+            HeroData["hero.ts<br/><code>src/content/hero.ts</code><br/>HeroContent type"]
+            FeatureData["features.ts<br/><code>src/content/features.ts</code><br/>FeatureCard[], VisualAsset[]"]
+            LinksData["links.ts<br/><code>src/content/links.ts</code><br/>ExternalLink[], StarMetric[]"]
+            FlagsData["flags.ts<br/><code>src/content/flags.ts</code><br/>FeatureFlag records"]
+            TypesDef["types.ts<br/><code>src/content/types.ts</code><br/>TypeScript interfaces"]
+        end
+
+        ContentBarrel -.re-exports.-> ContentModules
+    end
+
+    %% ============================================================================
+    %% SECTION COMPONENTS (CURRENT & FUTURE)
+    %% ============================================================================
+
+    subgraph Sections["Section Components"]
+        direction TB
+
+        %% Implemented sections (placeholders in App.tsx)
+        PlaceholderSections["Current: Placeholder Cards<br/><code>App.tsx lines 84-109</code><br/>Glass-surface cards for hero/simulation/features/integrations"]
+
+        %% Future section components
+        subgraph FutureSections["Future Section Components (I2+)"]
+            direction LR
+            Hero["HeroCommandPanel<br/><code>src/components/HeroCommandPanel/</code><br/><i>Planned: I2.T2</i><br/>Headline + copy-to-clipboard CTA"]
+            Simulation["VisualSimulationWindow<br/><code>src/components/VisualSimulationWindow/</code><br/><i>Planned: I2+</i><br/>Glassmorphic terminal mockup"]
+            Features["FeatureBentoGrid<br/><code>src/components/FeatureBentoGrid/</code><br/><i>Planned: I2+</i><br/>Responsive feature card grid"]
+            Integration["IntegrationStatusBar<br/><code>src/components/IntegrationStatusBar/</code><br/><i>Planned: I2.T3</i><br/>GitHub star count + badges"]
+        end
+    end
+
+    %% ============================================================================
+    %% HOOKS & UTILITIES (FUTURE)
+    %% ============================================================================
+
+    subgraph Hooks["Hooks & Utilities (Future)"]
+        direction LR
+        ClipboardHook["useClipboardCommand<br/><code>src/hooks/useClipboardCommand.ts (planned)</code><br/><i>Planned: I2.T2</i><br/>Copy install command"]
+        GitHubHook["useGitHubStars<br/><code>src/hooks/useGitHubStars.ts (planned)</code><br/><i>Planned: I2.T3</i><br/>Fetch star count with fallback"]
+        ScrollHook["useScrollReveal<br/><code>src/hooks/useScrollReveal.ts (planned)</code><br/><i>Future</i><br/>IntersectionObserver wrapper"]
+        AnalyticsUtil["Analytics Helper<br/><code>src/lib/analytics.ts (planned)</code><br/><i>Future</i><br/>PostHog event tracking"]
+    end
+
+    %% ============================================================================
+    %% RELATIONSHIPS & DATA FLOW
+    %% ============================================================================
+
+    %% App renders ExperienceShell
+    App -->|renders| ExperienceShell
+
+    %% App imports content for placeholder metadata
+    ContentBarrel -.provides data.-> App
+
+    %% ExperienceShell wraps sections
+    ExperienceShell -->|wraps children| Sections
+
+    %% Future components consume content
+    ContentBarrel -.will provide data.-> Hero
+    ContentBarrel -.will provide data.-> Simulation
+    ContentBarrel -.will provide data.-> Features
+    ContentBarrel -.will provide data.-> Integration
+
+    %% Future components use contexts
+    FeatureFlagCtx -.consumed by.-> Hero
+    FeatureFlagCtx -.consumed by.-> Integration
+    ScrollRevealCtx -.consumed by.-> Features
+    ScrollRevealCtx -.consumed by.-> Simulation
+
+    %% Future components use hooks
+    Hero -.will use.-> ClipboardHook
+    Integration -.will use.-> GitHubHook
+    Features -.will use.-> ScrollHook
+
+    %% Hooks emit analytics
+    ClipboardHook -.emits events.-> AnalyticsUtil
+    GitHubHook -.emits events.-> AnalyticsUtil
+
+    %% Navigation bar consumes external links
+    ContentBarrel -.provides links.-> NavBar
+
+    %% ============================================================================
+    %% STYLING & NOTES
+    %% ============================================================================
+
+    classDef implemented fill:#22c55e,stroke:#16a34a,color:#000
+    classDef planned fill:#8b5cf6,stroke:#7c3aed,color:#fff
+    classDef data fill:#3b82f6,stroke:#2563eb,color:#fff
+    classDef context fill:#f59e0b,stroke:#d97706,color:#000
+
+    class App,ExperienceShell,NavBar,BgLayers,FeatureFlagCtx,ScrollRevealCtx,ContentBarrel,PlaceholderSections implemented
+    class Hero,Simulation,Features,Integration,ClipboardHook,GitHubHook,ScrollHook,AnalyticsUtil planned
+    class ContentModules,HeroData,FeatureData,LinksData,FlagsData,TypesDef data
+    class Providers context
+
+    %% ============================================================================
+    %% LEGEND
+    %% ============================================================================
+
+    subgraph Legend
+        direction LR
+        L1["🟢 Implemented (I1)"]
+        L2["🟣 Planned (I2+)"]
+        L3["🔵 Data Modules"]
+        L4["🟠 Context Providers"]
+    end

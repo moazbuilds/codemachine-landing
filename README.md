@@ -1,4 +1,17 @@
+<!-- anchor: project-plan-root -->
+<!-- anchor: project-overview -->
 # CodeMachine Landing Page
+
+[![pnpm](https://img.shields.io/badge/pnpm-9.0.0-yellow.svg)](https://pnpm.io/)
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-5-646CFF.svg)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC.svg)](https://tailwindcss.com/)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com)
+[![Install](https://img.shields.io/badge/install-npm%20install-d97706.svg?logo=npm&logoColor=white)](#-quick-start)
+[![Dev Server](https://img.shields.io/badge/dev-pnpm%20run%20dev-6366f1.svg?logo=vite&logoColor=white)](#-quick-start)
+[![Artifacts](https://img.shields.io/badge/docs-architecture%20artifacts-9333ea.svg?logo=mermaid&logoColor=white)](#architectural-artifacts)
+[![Iteration](https://img.shields.io/badge/iteration-I1%20%E2%80%94%20Foundation-0ea5e9.svg)](#current-iteration-status)
 
 > Autonomous AI agents for your codebase - Experience the future of development with intelligent, context-aware automation.
 
@@ -8,31 +21,54 @@ This is the landing page for CodeMachine, built with modern web technologies and
 
 ### Technology Stack
 
-- **Framework:** React 18 with TypeScript
-- **Build Tool:** Vite 5
-- **Styling:** Tailwind CSS 3.4 with custom Aura theme
-- **Icons:** Lucide React (tree-shakeable)
-- **Package Manager:** pnpm 9.0.0
-- **Deployment:** Docker-ready with multi-stage builds
+- **Frontend:** React 18 with TypeScript 5.3, Vite 5 bundler
+- **Styling:** Tailwind CSS 3.4 with custom Aura theme tokens
+- **Icons:** Lucide React (tree-shakeable icon library)
+- **Package Manager:** pnpm 9.0.0 (frozen lockfile for CI parity)
+- **Backend:** None (static SPA with client-side GitHub API integration)
+- **Database:** None (content lives in typed `src/content/*.ts` modules)
+- **Deployment:** Vercel (primary) or Netlify, Docker multi-stage builds (node:20-alpine)
+- **Testing:** Playwright (E2E stubs), Vitest (unit stubs), Lighthouse (CI verification)
+- **Key Libraries:** clsx/tailwind-merge (utility composition), optional Framer Motion (future animations)
 
+<!-- anchor: iteration-overview -->
+### Current Iteration Status
+
+**Iteration I1 (Foundation):** ✅ Complete
+- Task I1.T1: React + Tailwind workspace with Aura theming ✅
+- Task I1.T2: Typed content models and ERD diagram ✅
+- Task I1.T3: ExperienceShell architecture with contexts ✅
+- Task I1.T4: README and component diagram ✅
+
+**Next Steps:** Iteration I2 will implement HeroCommandPanel, VisualSimulationWindow, and GitHub star integration.
+
+<!-- anchor: getting-started -->
 ## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 20+ (LTS recommended)
-- pnpm 9.0.0 or higher
+- **Node.js:** 20.x or higher (LTS recommended for stability)
+- **pnpm:** 9.0.0 or higher (`npm install -g pnpm@9.0.0`)
+- **Git:** For cloning the repository
 
-### Installation
+### Installation & Development
 
 ```bash
-# Install dependencies
+# 1. Clone the repository
+git clone https://github.com/moazbuilds/CodeMachine-Website.git
+cd CodeMachine-Website
+
+# 2. Install dependencies (uses frozen lockfile for reproducibility)
 pnpm install
 
-# Start development server
+# 3. Start development server with hot module replacement
 pnpm run dev
 
-# Open browser at http://localhost:3000
+# 4. Open browser at http://localhost:3000
+# Dev server runs on port 3000 with host access enabled
 ```
+
+> Prefer pnpm for deterministic installs. If pnpm is unavailable, run `npm install` (Corepack-enabled) to hydrate `node_modules`, then continue with the same dev scripts.
 
 ### Available Scripts
 
@@ -48,6 +84,80 @@ pnpm run preview      # Preview production build locally
 pnpm run lint         # Run ESLint
 pnpm run format       # Format code with Prettier
 ```
+
+<!-- anchor: core-architecture -->
+## 🏗️ Architecture & Component Overview
+
+This project follows a **static React shell** architecture where all visual modules consume typed content models and expose explicit props. The ExperienceShell orchestrates layout, theming, and navigation while delegating section-specific rendering to specialized components.
+
+### Key Components & Responsibilities
+
+| Component | Responsibility | File Path | Status |
+|-----------|---------------|-----------|--------|
+| **ExperienceShell** | Wraps layout, background layers, ambient glows, sticky navigation; enforces Aura theming and provides context providers | `src/components/ExperienceShell/index.tsx` | ✅ Implemented |
+| **NavigationBar** | Sticky header with doc/GitHub links, logo, and scroll-aware behavior | `src/components/NavigationBar/index.tsx` | ✅ Implemented |
+| **BackgroundLayers** | Renders noise textures and ambient gradient glows for Aura aesthetic | `src/components/ExperienceShell/BackgroundLayers.tsx` | ✅ Implemented |
+| **FeatureFlagProvider** | Context provider for feature toggles (seeds from `@/content/flags`) | `src/components/ExperienceShell/FeatureFlagContext.tsx` | ✅ Implemented |
+| **ScrollRevealProvider** | Context for scroll-triggered animations (placeholder for future IntersectionObserver logic) | `src/components/ExperienceShell/ScrollRevealContext.tsx` | ✅ Implemented |
+| **HeroCommandPanel** | Headline, command snippet, copy-to-clipboard control, documentation CTA | `src/components/HeroCommandPanel/` | ⏳ Planned (I2.T2) |
+| **VisualSimulationWindow** | Glassmorphic terminal mockup with animations, fallback static image for mobile | `src/components/VisualSimulationWindow/` | ⏳ Planned (I2+) |
+| **FeatureBentoGrid** | Responsive grid of feature cards with hover glows and scroll observers | `src/components/FeatureBentoGrid/` | ⏳ Planned (I2+) |
+| **IntegrationStatusBar** | GitHub star count fetcher with retries, skeleton state, fallback badge | `src/components/IntegrationStatusBar/` | ⏳ Planned (I2.T3) |
+| **ContentConfigModule** | Centralizes typed content (`HeroContent`, `FeatureCard`, `ExternalLink`, flags) | `src/content/index.ts` | ✅ Implemented |
+
+### Content System & Data Flow
+
+All content is defined as **typed TypeScript modules** in `src/content/`, ensuring compile-time validation and deterministic builds:
+
+- **`@/content/hero`** → Exports `heroContent: HeroContent` with headline, description, install command, and CTAs
+- **`@/content/features`** → Exports `featureCards: FeatureCard[]` and `visualAssets: VisualAsset[]` for bento grid rendering
+- **`@/content/links`** → Exports `externalLinks: ExternalLink[]`, `starMetrics: StarMetric[]`, and GitHub helpers
+- **`@/content/flags`** → Exports `featureFlags: Record<string, FeatureFlag>` and `isFeatureEnabled()` helper
+- **`@/content/types`** → Defines all TypeScript interfaces (`HeroContent`, `FeatureCard`, `IconKey`, etc.)
+
+Components consume this data via the barrel export `@/content/index.ts`, never importing directly from individual modules. This ensures a single source of truth and simplifies refactoring.
+
+### Feature Flag Usage
+
+Feature flags are defined in `src/content/flags.ts` and accessed via the `FeatureFlagProvider` context:
+
+```tsx
+import { useFeatureFlags } from '@/components/ExperienceShell/FeatureFlagContext'
+
+function MyComponent() {
+  const { isEnabled } = useFeatureFlags()
+
+  return (
+    <>
+      {isEnabled('clipboard-interaction') && <CopyButton />}
+      {isEnabled('github-stars') && <StarCount />}
+    </>
+  )
+}
+```
+
+To toggle a flag, edit `src/content/flags.ts`:
+
+```typescript
+export const featureFlags: Record<string, FeatureFlag> = {
+  'clipboard-interaction': {
+    key: 'clipboard-interaction',
+    enabled: true, // ← Change to false to disable
+    description: 'Enable copy-to-clipboard for install command',
+  },
+}
+```
+
+<!-- anchor: artifact-pointers -->
+### Architectural Artifacts
+
+This project maintains living architectural documentation:
+
+- **[Component Diagram](docs/diagrams/component_overview.mmd)** (Mermaid) — Visualizes ExperienceShell, section modules, content flow, and hook relationships
+- **[Data Model ERD](docs/diagrams/data_model_erd.puml)** (PlantUML) — Captures typed content entities and their relationships
+- **Journey Sequence Diagram** (PlantUML) — Documents user flows for clipboard and GitHub interactions *(Planned: I2.T2)*
+- **GitHub Integration Spec** (Markdown) — Defines API contract, caching, fallback semantics *(Planned: I2.T3)*
+- **Verification Checklist** (Markdown) — CI/Lighthouse/Playwright gates *(Planned: I3.T4)*
 
 ## 🎨 Aura Design System
 
@@ -187,13 +297,71 @@ docker run -p 3000:3000 -v $(pwd):/app codemachine-dev
 - **Custom Plugin:** Adds `.glass-card`, `.text-glow`, `.focus-ring`, `.inner-glow` utilities
 - **Extended Theme:** Custom spacing, colors, fonts, animations, and keyframes
 
-## 📝 Next Steps (Future Tasks)
+<!-- anchor: troubleshooting -->
+## 🔧 Troubleshooting
 
-1. **I1.T2:** Create typed content models and ERD diagram
-2. **I1.T3:** Build component architecture and Mermaid diagram
-3. **I2.T1:** Implement ExperienceShell and NavigationBar
-4. **I2.T2:** Build HeroCommandPanel with clipboard interaction
-5. **I2.T3:** Integrate GitHub API for star count
+### Common Issues
+
+**Port 3000 already in use:**
+```bash
+# Kill the process using port 3000
+lsof -ti:3000 | xargs kill -9
+# Or use a different port
+pnpm run dev -- --port 3001
+```
+
+**pnpm install fails:**
+```bash
+# Clear cache and retry
+pnpm store prune
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+**TypeScript errors after pulling latest:**
+```bash
+# Restart TypeScript server in your editor
+# VS Code: Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
+# Or rebuild
+pnpm run build
+```
+
+**Tailwind classes not applying:**
+- Check `tailwind.config.ts` includes your file paths in `content: []`
+- Ensure your editor has Tailwind CSS IntelliSense extension installed
+- Verify you've imported `./src/index.css` in `main.tsx`
+
+**Docker build fails:**
+```bash
+# Ensure Docker is running and you have enough disk space
+docker system prune -a
+docker build -t codemachine-landing .
+```
+
+### Getting Help
+
+- Check existing [GitHub Issues](https://github.com/moazbuilds/CodeMachine-Website/issues)
+- Review architectural docs in `docs/diagrams/` for component relationships
+- Consult the [Aura Design System](#-aura-design-system) section for theming questions
+
+## 📝 Development Roadmap
+
+### ✅ Iteration I1 (Foundation) - COMPLETE
+- I1.T1: React + Tailwind workspace with Aura theming
+- I1.T2: Typed content models and ERD diagram
+- I1.T3: ExperienceShell architecture with contexts
+- I1.T4: README and component diagram (this document)
+
+### 🔄 Iteration I2 (Hero & Integrations) - NEXT
+- I2.T1: Implement HeroCommandPanel with copy-to-clipboard
+- I2.T2: Build clipboard interaction hook and analytics
+- I2.T3: GitHub API integration for star count with fallback
+- I2.T4: Create journey sequence diagram
+
+### 🔮 Future Iterations
+- **I3:** VisualSimulationWindow with terminal animations
+- **I4:** FeatureBentoGrid with scroll reveals
+- **I5:** Deployment pipeline and verification gates
 
 ## 📄 License
 
