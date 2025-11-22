@@ -175,4 +175,14 @@
   .animate-on-scroll.visible {
     @apply opacity-100 translate-y-0;
   }
+
+  /* Scrollbar hiding utility for mobile horizontal scroll */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
 }

@@ -20,6 +20,8 @@ import {
 } from '@/content'
 import { ExperienceShell } from '@/components/ExperienceShell'
 import { HeroCommandPanel } from '@/components/HeroCommandPanel'
+import { VisualSimulationWindow } from '@/components/VisualSimulationWindow'
+import { MobileCard } from '@/components/VisualSimulationWindow/MobileCard'
 import '@/styles/hero.css'
 
 type ShellSection = {
@@ -80,34 +82,40 @@ function App() {
       {/* Hero Section - Live Implementation (I2.T1) */}
       <HeroCommandPanel />
 
+      {/* Simulation Window - Live Implementation (I2.T2) */}
+      <VisualSimulationWindow />
+      <MobileCard />
+
       {/* Remaining Sections - Placeholders */}
       <div className="mx-auto flex max-w-5xl flex-col gap-6 py-10">
-        {shellSections.map((section) => (
-          <section
-            key={section.id}
-            id={section.id}
-            aria-label={`${section.label} placeholder`}
-            className="glass-surface rounded-2xl border border-white/5 px-6 py-5 shadow-lg shadow-black/20"
-          >
-            <div className="flex flex-col gap-2">
-              <p className="label-telemetry text-neutral-500">{section.status}</p>
-              <div className="flex flex-col gap-1">
-                <h2 className="heading-section text-gradient-primary">
-                  {section.label}
-                </h2>
-                <p className="text-sm text-neutral-400">{section.description}</p>
+        {shellSections
+          .filter((section) => section.id !== 'simulation')
+          .map((section) => (
+            <section
+              key={section.id}
+              id={section.id}
+              aria-label={`${section.label} placeholder`}
+              className="glass-surface rounded-2xl border border-white/5 px-6 py-5 shadow-lg shadow-black/20"
+            >
+              <div className="flex flex-col gap-2">
+                <p className="label-telemetry text-neutral-500">{section.status}</p>
+                <div className="flex flex-col gap-1">
+                  <h2 className="heading-section text-gradient-primary">
+                    {section.label}
+                  </h2>
+                  <p className="text-sm text-neutral-400">{section.description}</p>
+                </div>
+                <p className="text-xs uppercase tracking-[0.2em] text-primary-400">
+                  {section.detail}
+                </p>
               </div>
-              <p className="text-xs uppercase tracking-[0.2em] text-primary-400">
-                {section.detail}
-              </p>
-            </div>
 
-            <div className="mt-4 rounded-lg border border-dashed border-white/10 px-4 py-3 text-sm text-neutral-500">
-              TODO: Mount <code className="text-primary-300">{section.label}</code>{' '}
-              component once implemented.
-            </div>
-          </section>
-        ))}
+              <div className="mt-4 rounded-lg border border-dashed border-white/10 px-4 py-3 text-sm text-neutral-500">
+                TODO: Mount <code className="text-primary-300">{section.label}</code>{' '}
+                component once implemented.
+              </div>
+            </section>
+          ))}
       </div>
     </ExperienceShell>
   )

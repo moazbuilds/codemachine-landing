@@ -1,0 +1,131 @@
+@startuml journey_install_sequence
+!theme plain
+
+' ============================================================================
+' Journey 1: Installation Flow Sequence Diagram
+' ============================================================================
+'
+' Title: User Journey from Page Load to Copy Success/Failure
+' Description: Tracks the complete interaction flow from initial page load
+'              through hero command panel interaction to clipboard operation
+'              and visual simulation response.
+'
+' To render this diagram:
+' 1. Visit: https://www.plantuml.com/plantuml/uml/
+' 2. Paste this file's contents
+' 3. Or use PlantUML CLI: plantuml journey_install_sequence.puml
+'
+' Referenced by: I2.T2 deliverables
+' ============================================================================
+
+title Journey 1: Install Command Copy Flow\n(Load → Copy Attempt → Success/Failure)
+
+actor User as user
+participant "Browser" as browser
+participant "App.tsx" as app
+participant "HeroCommandPanel" as hero
+participant "Clipboard API" as clipboard
+participant "VisualSimulationWindow" as simulation
+
+== Page Load ==
+
+user -> browser: Navigate to landing page
+activate browser
+
+browser -> app: Mount application
+activate app
+
+app -> app: Load content modules\n(hero, features, visualAssets)
+app -> hero: Render with installCommand prop
+activate hero
+
+hero -> hero: Display install command\n"npx @anthropic-ai/create-codemachine"
+hero --> user: Show CTA button\n"Copy Install Command"
+deactivate hero
+
+app -> simulation: Render simulation section\n(off-viewport, pending scroll)
+activate simulation
+simulation -> simulation: Register with\nScrollRevealProvider
+simulation --> app: Component ready
+deactivate simulation
+
+app --> browser: Initial render complete
+deactivate app
+
+browser --> user: Page interactive\nHero visible
+deactivate browser
+
+== Copy Interaction - Success Path ==
+
+user -> hero: Click "Copy Install Command"
+activate hero
+
+hero -> hero: Log analytics event\n[Analytics] Copy attempt started
+
+hero -> clipboard: navigator.clipboard.writeText(installCommand)
+activate clipboard
+
+alt Clipboard Permission Granted
+    clipboard --> hero: Promise resolves (success)
+    deactivate clipboard
+
+    hero -> hero: Update UI state\nShow success toast
+    hero -> hero: Log success event\n[Analytics] Clipboard write: Success ✓
+
+    hero --> user: Visual feedback\n"Copied to clipboard!"
+    deactivate hero
+
+    user -> browser: Scroll down to simulation
+    activate browser
+
+    browser -> simulation: Element enters viewport
+    activate simulation
+
+    simulation -> simulation: IntersectionObserver\ntriggers isVisible=true
+    simulation -> simulation: Apply reveal animations\n(fade-in, perspective)
+    simulation -> simulation: Log analytics\n[Analytics] Simulation revealed
+
+    simulation --> user: Show success telemetry\n"[Analytics] Copy: Success ✓"
+    deactivate simulation
+
+    browser --> user: Simulation fully visible
+    deactivate browser
+
+== Copy Interaction - Failure Path ==
+
+else Clipboard Permission Denied
+    user -> hero: Click "Copy Install Command"
+    activate hero
+
+    hero -> hero: Log analytics event\n[Analytics] Copy attempt started
+
+    hero -> clipboard: navigator.clipboard.writeText(installCommand)
+    activate clipboard
+
+    clipboard --> hero: Promise rejects (error)
+    deactivate clipboard
+
+    hero -> hero: Catch error\nUpdate UI state
+    hero -> hero: Log failure event\n[Analytics] Clipboard write: Failed
+
+    hero --> user: Error feedback\n"Copy failed - please enable clipboard access"
+    deactivate hero
+
+    user -> browser: Scroll down to simulation
+    activate browser
+
+    browser -> simulation: Element enters viewport
+    activate simulation
+
+    simulation -> simulation: IntersectionObserver\ntriggers isVisible=true
+    simulation -> simulation: Apply reveal animations
+    simulation -> simulation: Log analytics\n[Analytics] Simulation revealed
+
+    simulation --> user: Show failure telemetry\n"[Analytics] Copy: Failed ✗"
+    deactivate simulation
+
+    browser --> user: Simulation displays\nerror state
+    deactivate browser
+end
+
+@enduml
