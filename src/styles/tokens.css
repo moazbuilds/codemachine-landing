@@ -1,0 +1,42 @@
+/* ExperienceShell Design Tokens */
+/* Referenced by: src/components/ExperienceShell/index.tsx:* */
+
+:root {
+  /* Shell-specific spacing */
+  --shell-nav-height: 64px;
+  --shell-padding-x: 1.5rem;
+  --shell-padding-y: 1rem;
+
+  /* Background layer colors */
+  --shell-bg-gradient-start: #020202;
+  --shell-bg-gradient-end: #050505;
+  --shell-glow-primary: rgba(139, 92, 246, 0.2);
+  --shell-glow-secondary: rgba(59, 130, 246, 0.2);
+
+  /* Navigation tokens */
+  --nav-bg: rgba(10, 10, 10, 0.8);
+  --nav-border: rgba(255, 255, 255, 0.08);
+  --nav-link-hover: rgba(255, 255, 255, 0.05);
+  --nav-logo-size: 32px;
+
+  /* Z-index layers */
+  --z-background: 0;
+  --z-content: 10;
+  --z-navigation: 50;
+  --z-overlay: 100;
+}
+
+/* Responsive breakpoint overrides */
+@media (min-width: 768px) {
+  :root {
+    --shell-padding-x: 2rem;
+    --shell-nav-height: 72px;
+    --nav-logo-size: 36px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --shell-padding-x: 3rem;
+  }
+}

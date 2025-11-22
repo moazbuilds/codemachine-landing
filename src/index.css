@@ -1,3 +1,6 @@
+/* Import ExperienceShell design tokens */
+@import './styles/tokens.css';
+
 /* Tailwind Directives */
 @tailwind base;
 @tailwind components;
