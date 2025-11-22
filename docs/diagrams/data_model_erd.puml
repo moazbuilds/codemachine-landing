@@ -1,0 +1,120 @@
+@startuml CodeMachine Data Model ERD
+
+!theme plain
+skinparam linetype ortho
+skinparam backgroundColor #1a1625
+skinparam defaultFontColor #e6e6fa
+skinparam classBorderColor #6d6d8e
+skinparam classBackgroundColor #2a2639
+
+' Diagram: Data Model ERD (I1.T2)
+' Entity-Relationship Diagram for CodeMachine content modules
+'
+' Rendering Instructions:
+' - Online: Visit https://www.plantuml.com/plantuml/uml and paste this file's contents
+' - CLI: Run `plantuml data_model_erd.puml` to generate PNG/SVG
+' - VSCode: Install PlantUML extension and preview with Alt+D
+'
+' To regenerate after updates:
+' 1. Edit entity definitions or relationships below
+' 2. Use one of the rendering methods above to validate syntax
+' 3. Commit the .puml source (not rendered images) to keep diffs clean
+
+' Core content entity representing hero section copy
+entity "HeroContent" as hero {
+  + title : string
+  + kicker : string
+  + description : string
+  + ctas : CTAButtons
+  + telemetryLabel : string
+}
+
+' CTA button configuration embedded in HeroContent
+entity "CTAButtons" as cta {
+  + primary : string
+  + secondary : string
+}
+
+' Feature card entity for modular feature displays
+entity "FeatureCard" as feature {
+  + id : string
+  + title : string
+  + description : string
+  + icon : IconKey
+  + accent : 'primary' | 'emerald'
+}
+
+' Icon key enumeration
+entity "IconKey" as icon {
+  + 'sparkles' | 'zap' | 'terminal'
+}
+
+' External navigation link entity
+entity "ExternalLink" as link {
+  + label : string
+  + href : string
+  + description? : string
+}
+
+' Telemetry metric entity for status badges
+entity "StarMetric" as metric {
+  + label : string
+  + value : string
+}
+
+' Visual asset reference entity
+entity "VisualAsset" as asset {
+  + id : string
+  + src : string
+  + alt : string
+  + type : 'screenshot' | 'diagram' | 'video'
+}
+
+' Feature toggle entity
+entity "FeatureFlag" as flag {
+  + key : string
+  + description : string
+  + enabled : boolean
+}
+
+' Helper functions (not entities, but part of the data layer)
+note top of link
+  **Helper Functions**
+  buildFallbackStarCopy(repoName: string): string
+  - Generates fallback copy when GitHub star fetch fails
+end note
+
+note top of flag
+  **Helper Functions**
+  isFeatureEnabled(key: string): boolean
+  - Checks if a feature flag is enabled
+end note
+
+' Relationships
+hero ||--|| cta : "embeds"
+feature }o--|| icon : "references"
+hero ..> metric : "displays in telemetry"
+feature ..> asset : "may reference"
+
+' Module organization notes
+note bottom of hero
+  **Module**: src/content/hero.ts
+  Exported as: heroContent
+end note
+
+note bottom of feature
+  **Module**: src/content/features.ts
+  Exported as: featureCards[], visualAssets[]
+end note
+
+note bottom of link
+  **Module**: src/content/links.ts
+  Exported as: externalLinks[], starMetrics[]
+end note
+
+note bottom of flag
+  **Module**: src/content/flags.ts
+  Exported as: featureFlags[]
+end note
+
+@enduml
