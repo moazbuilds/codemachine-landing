@@ -49,6 +49,13 @@
     scroll-behavior: smooth;
   }
 
+  /* Disable smooth scrolling for users who prefer reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
   /* Custom scrollbar styling for webkit browsers */
   ::-webkit-scrollbar {
     width: 8px;
@@ -184,5 +191,61 @@
 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;  /* Chrome, Safari, Opera */
+  }
+}
+
+/* ============================================
+   Accessibility: Reduced Motion Support
+   ============================================ */
+
+/**
+ * Global reduced motion support (WCAG 2.1 AA compliance)
+ * Task: I2.T4 - Accessibility & Polish
+ *
+ * Disables all animations, transitions, and transforms for users who
+ * prefer reduced motion. This ensures WCAG 2.1 AA compliance and
+ * respects user preferences for reduced visual motion.
+ *
+ * Affected elements:
+ * - Tailwind animations (fade-up, pulse-slow, shimmer)
+ * - All transition properties
+ * - Scroll-based reveal animations
+ * - Button hover transforms
+ * - Component-specific animations
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable Tailwind custom animations */
+  .animate-fade-up,
+  .animate-pulse-slow,
+  .animate-shimmer {
+    animation: none !important;
+  }
+
+  /* Disable scroll reveal animations */
+  .animate-on-scroll,
+  .animate-on-scroll.visible {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Disable button hover transforms */
+  .btn-primary,
+  .btn-secondary {
+    transition: none !important;
+  }
+
+  /* Keep only opacity changes for focus states (still accessible) */
+  .focus-ring-aura:focus-visible {
+    transition: opacity 0.01ms !important;
   }
 }

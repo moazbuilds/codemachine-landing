@@ -1,9 +1,18 @@
 /**
  * useScrollReveal Hook
+ * Task: I2.T4 - Updated to use shared ScrollRevealProvider
+ *
  * Referenced by: src/components/VisualSimulationWindow/index.tsx
  *
  * Wraps ScrollRevealContext to provide scroll-based animation visibility state.
- * Respects prefers-reduced-motion for accessibility.
+ * Now uses the centralized provider for optimal performance.
+ * Respects prefers-reduced-motion for accessibility (WCAG 2.1 AA).
+ *
+ * Benefits of shared provider:
+ * - Single IntersectionObserver instance across all components
+ * - Automatic reduced-motion handling
+ * - Consistent animation timing
+ * - Lower memory overhead
  *
  * Usage:
  * ```tsx
@@ -13,7 +22,7 @@
  */
 
 import { useEffect, useState, type RefObject } from 'react'
-import { useScrollReveal as useScrollRevealContext } from '@/components/ExperienceShell/ScrollRevealContext'
+import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
 
 /**
  * Custom hook for scroll-based reveal animations.
@@ -23,59 +32,29 @@ import { useScrollReveal as useScrollRevealContext } from '@/components/Experien
  */
 export function useScrollReveal(elementRef: RefObject<HTMLElement>): boolean {
   const [isVisible, setIsVisible] = useState(false)
-  const [reducedMotion, setReducedMotion] = useState(false)
-  const context = useScrollRevealContext()
-
-  // Check for reduced motion preference
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReducedMotion(mediaQuery.matches)
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setReducedMotion(e.matches)
-    }
-
-    mediaQuery.addEventListener('change', handleChange)
-    return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [])
+  const { register, unregister, reducedMotion } = useScrollRevealContext()
 
   useEffect(() => {
     const element = elementRef.current
     if (!element) return
 
-    // If reduced motion is enabled, default to visible
+    // If reduced motion is enabled, immediately mark visible
     if (reducedMotion) {
       setIsVisible(true)
       return
     }
 
-    // Register with context (currently no-op, but future-proof)
-    context.register(element)
-
-    // Implement our own IntersectionObserver since context is currently no-op
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true)
-            // Once visible, we can stop observing
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      {
-        threshold: 0.1, // Trigger when 10% of element is visible
-        rootMargin: '0px 0px -100px 0px', // Start animation slightly before entering viewport
+    // Register with shared provider, passing visibility callback
+    register(element, (visible) => {
+      if (visible) {
+        setIsVisible(true)
       }
-    )
-
-    observer.observe(element)
+    })
 
     return () => {
-      observer.disconnect()
-      context.unregister(element)
+      unregister(element)
     }
-  }, [elementRef, context, reducedMotion])
+  }, [elementRef, register, unregister, reducedMotion])
 
   return isVisible
 }

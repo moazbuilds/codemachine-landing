@@ -1,34 +1,41 @@
 /**
  * ScrollReveal Context
- * Referenced by: src/components/ExperienceShell/index.tsx:*
+ * Task: I2.T4 - Re-export upgraded provider from src/context/ScrollRevealProvider.tsx
  *
- * TODO (I2+): Implement scroll-based reveal animation orchestration
- * This context will manage IntersectionObserver registration and
- * coordinate scroll-triggered animations across child components.
+ * This module maintains backward compatibility for existing imports
+ * while delegating implementation to the centralized provider.
  *
- * Future hooks (e.g., useScrollReveal) will consume this context
- * to register elements for reveal animations when they enter the viewport.
+ * The actual ScrollRevealProvider implementation now lives in:
+ * src/context/ScrollRevealProvider.tsx
+ *
+ * Referenced by:
+ * - src/components/ExperienceShell/index.tsx (wraps children)
+ * - src/hooks/useScrollReveal.ts (calls register/unregister)
  */
 
-import { createContext, useContext, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import {
+  ScrollRevealProvider as ScrollRevealProviderImpl,
+  useScrollRevealContext,
+} from '@/context/ScrollRevealProvider'
 
+/**
+ * Legacy interface for backward compatibility
+ * Consumers can call register/unregister without callbacks
+ */
 interface ScrollRevealContextValue {
   /**
    * Register an element for scroll-based reveal animation.
-   * TODO: Implement IntersectionObserver logic in future iteration.
    * @param element - The DOM element to observe
    */
   register: (element: HTMLElement) => void
 
   /**
    * Unregister an element from scroll-based reveal animation.
-   * TODO: Cleanup observer when element unmounts.
    * @param element - The DOM element to stop observing
    */
   unregister: (element: HTMLElement) => void
 }
-
-const ScrollRevealContext = createContext<ScrollRevealContextValue | null>(null)
 
 /**
  * Hook to access scroll reveal registration methods.
@@ -37,11 +44,20 @@ const ScrollRevealContext = createContext<ScrollRevealContextValue | null>(null)
  */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useScrollReveal(): ScrollRevealContextValue {
-  const context = useContext(ScrollRevealContext)
-  if (!context) {
-    throw new Error('useScrollReveal must be used within ScrollRevealProvider')
+  const context = useScrollRevealContext()
+
+  // Return simplified interface without exposing callback parameter
+  // (hooks like useScrollReveal.ts manage their own callbacks)
+  return {
+    register: (element: HTMLElement) => {
+      // No-op registration for legacy compatibility
+      // The actual hook (src/hooks/useScrollReveal.ts) manages its own observer
+      context.register(element, () => {
+        // Callback handled by individual hooks
+      })
+    },
+    unregister: context.unregister,
   }
-  return context
 }
 
 interface ScrollRevealProviderProps {
@@ -50,25 +66,8 @@ interface ScrollRevealProviderProps {
 
 /**
  * Provider component for scroll reveal context.
- * Currently provides no-op implementations; will be enhanced in future iterations.
+ * Re-exports the full implementation from src/context/ScrollRevealProvider.tsx
  */
 export function ScrollRevealProvider({ children }: ScrollRevealProviderProps) {
-  // TODO (I2+): Initialize IntersectionObserver with threshold/rootMargin config
-  // TODO (I2+): Maintain Set<HTMLElement> of registered elements
-  // TODO (I2+): Apply .visible class when elements intersect viewport
-
-  const contextValue: ScrollRevealContextValue = {
-    register: () => {
-      // No-op placeholder - future implementation will attach observer
-    },
-    unregister: () => {
-      // No-op placeholder - future implementation will detach observer
-    },
-  }
-
-  return (
-    <ScrollRevealContext.Provider value={contextValue}>
-      {children}
-    </ScrollRevealContext.Provider>
-  )
+  return <ScrollRevealProviderImpl>{children}</ScrollRevealProviderImpl>
 }

@@ -14,8 +14,10 @@
 
 import { useRef, useEffect } from 'react'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
 import { Terminal, Activity, Cpu } from 'lucide-react'
 import type { SimulationPane, SimulationMetric } from './index'
+import { trackEvent } from '@/lib/analytics'
 
 export interface MobileCardProps {
   panes?: SimulationPane[]
@@ -81,10 +83,12 @@ export function MobileCard({
 }: MobileCardProps) {
   const containerRef = useRef<HTMLElement>(null)
   const isVisible = useScrollReveal(containerRef)
+  const { reducedMotion } = useScrollRevealContext()
+  const revealActive = reducedMotion || isVisible
 
   useEffect(() => {
     if (isVisible) {
-      console.log('[Analytics Stub] MobileCard entered viewport')
+      trackEvent('simulation_play', { surface: 'mobile' })
     }
   }, [isVisible])
 
@@ -108,8 +112,8 @@ export function MobileCard({
 
       {/* Simplified Glass Container */}
       <div
-        className={`glass-surface rounded-xl p-4 border-white/10 shadow-xl transition-all duration-500 ${
-          isVisible ? 'opacity-100' : 'opacity-0'
+        className={`glass-surface rounded-xl p-4 border-white/10 shadow-xl transition-all duration-500 motion-reduce:transition-none ${
+          revealActive ? 'opacity-100' : 'opacity-0'
         }`}
       >
         {/* Panes Stacked Vertically */}
@@ -177,8 +181,8 @@ export function MobileCard({
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] bg-primary-500/5 rounded-full blur-[80px] pointer-events-none -z-10"
         style={{
-          opacity: isVisible ? 0.3 : 0,
-          transition: 'opacity 1s ease-out',
+          opacity: reducedMotion ? 0.2 : revealActive ? 0.3 : 0,
+          transition: reducedMotion ? 'none' : 'opacity 1s ease-out',
         }}
       />
     </section>

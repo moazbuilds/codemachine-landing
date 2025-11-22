@@ -15,7 +15,9 @@
 
 import { useRef, useEffect } from 'react'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
 import { Terminal, Activity, Cpu } from 'lucide-react'
+import { trackEvent } from '@/lib/analytics'
 
 export interface SimulationPane {
   id: string
@@ -132,10 +134,12 @@ export function VisualSimulationWindow({
 }: VisualSimulationWindowProps) {
   const containerRef = useRef<HTMLElement>(null)
   const isVisible = useScrollReveal(containerRef)
+  const { reducedMotion } = useScrollRevealContext()
+  const revealActive = reducedMotion || isVisible
 
   useEffect(() => {
     if (isVisible) {
-      console.log('[Analytics Stub] VisualSimulationWindow entered viewport')
+      trackEvent('simulation_play', { surface: 'desktop' })
     }
   }, [isVisible])
 
@@ -160,15 +164,15 @@ export function VisualSimulationWindow({
 
       {/* Desktop Simulation Window */}
       <div
-        className={`hidden md:block transition-all duration-700 ${
-          isVisible
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-10'
+        className={`hidden md:block transition-all duration-700 motion-reduce:transition-none motion-reduce:transform-none ${
+          revealActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
         style={{
-          transform: isVisible
-            ? 'perspective(1000px) rotateX(0deg)'
-            : 'perspective(1000px) rotateX(5deg)',
+          transform: reducedMotion
+            ? 'none'
+            : revealActive
+              ? 'perspective(1000px) rotateX(0deg)'
+              : 'perspective(1000px) rotateX(5deg)',
         }}
       >
         {/* Glass Container */}
@@ -196,13 +200,23 @@ export function VisualSimulationWindow({
                 <div
                   key={pane.id}
                   className={`glass-surface rounded-lg p-4 border ${accentClass} ${glowClass} transition-all duration-500`}
-                  style={{
-                    transitionDelay: isVisible ? `${index * 100}ms` : '0ms',
-                    opacity: isVisible ? 1 : 0,
-                    transform: isVisible
-                      ? 'translateY(0)'
-                      : 'translateY(20px)',
-                  }}
+                  style={
+                    reducedMotion
+                      ? {
+                          opacity: 1,
+                          transform: 'none',
+                          transitionDelay: '0ms',
+                        }
+                      : {
+                          transitionDelay: revealActive
+                            ? `${index * 100}ms`
+                            : '0ms',
+                          opacity: revealActive ? 1 : 0,
+                          transform: revealActive
+                            ? 'translateY(0)'
+                            : 'translateY(20px)',
+                        }
+                  }
                 >
                   {/* Pane Header */}
                   <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
@@ -244,14 +258,23 @@ export function VisualSimulationWindow({
               <div
                 key={metric.label}
                 className="flex-1 min-w-[140px]"
-                style={{
-                  transitionDelay: isVisible
-                    ? `${(panes.length + index) * 100}ms`
-                    : '0ms',
-                  opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? 'scale(1)' : 'scale(0.95)',
-                  transition: 'all 0.5s',
-                }}
+                style={
+                  reducedMotion
+                    ? {
+                        opacity: 1,
+                        transform: 'none',
+                        transitionDelay: '0ms',
+                        transition: 'none',
+                      }
+                    : {
+                        transitionDelay: revealActive
+                          ? `${(panes.length + index) * 100}ms`
+                          : '0ms',
+                        opacity: revealActive ? 1 : 0,
+                        transform: revealActive ? 'scale(1)' : 'scale(0.95)',
+                        transition: 'all 0.5s',
+                      }
+                }
               >
                 <p className="label-telemetry text-neutral-500 mb-1">
                   {metric.label}
@@ -269,8 +292,8 @@ export function VisualSimulationWindow({
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary-500/10 rounded-full blur-[100px] pointer-events-none -z-10"
           style={{
-            opacity: isVisible ? 0.4 : 0,
-            transition: 'opacity 1s ease-out',
+            opacity: reducedMotion ? 0.2 : revealActive ? 0.4 : 0,
+            transition: reducedMotion ? 'none' : 'opacity 1s ease-out',
           }}
         />
       </div>

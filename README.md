@@ -11,7 +11,7 @@
 [![Install](https://img.shields.io/badge/install-npm%20install-d97706.svg?logo=npm&logoColor=white)](#-quick-start)
 [![Dev Server](https://img.shields.io/badge/dev-pnpm%20run%20dev-6366f1.svg?logo=vite&logoColor=white)](#-quick-start)
 [![Artifacts](https://img.shields.io/badge/docs-architecture%20artifacts-9333ea.svg?logo=mermaid&logoColor=white)](#architectural-artifacts)
-[![Iteration](https://img.shields.io/badge/iteration-I1%20%E2%80%94%20Foundation-0ea5e9.svg)](#current-iteration-status)
+[![Iteration](https://img.shields.io/badge/iteration-I2%20%E2%80%94%20Telemetry-0ea5e9.svg)](#current-iteration-status)
 
 > Autonomous AI agents for your codebase - Experience the future of development with intelligent, context-aware automation.
 
@@ -34,13 +34,17 @@ This is the landing page for CodeMachine, built with modern web technologies and
 <!-- anchor: iteration-overview -->
 ### Current Iteration Status
 
+**Iteration I2 (Telemetry Experience):** ✅ Complete
+- Task I2.T1: HeroCommandPanel + clipboard interactions ✅
+- Task I2.T2: VisualSimulationWindow desktop/mobile variants ✅
+- Task I2.T3: IntegrationStatusBar + GitHub spec ✅
+- Task I2.T4: Accessibility polish + analytics instrumentation ✅
+
 **Iteration I1 (Foundation):** ✅ Complete
 - Task I1.T1: React + Tailwind workspace with Aura theming ✅
 - Task I1.T2: Typed content models and ERD diagram ✅
 - Task I1.T3: ExperienceShell architecture with contexts ✅
 - Task I1.T4: README and component diagram ✅
-
-**Next Steps:** Iteration I2 will implement HeroCommandPanel, VisualSimulationWindow, and GitHub star integration.
 
 <!-- anchor: getting-started -->
 ## 🚀 Quick Start
@@ -99,10 +103,10 @@ This project follows a **static React shell** architecture where all visual modu
 | **BackgroundLayers** | Renders noise textures and ambient gradient glows for Aura aesthetic | `src/components/ExperienceShell/BackgroundLayers.tsx` | ✅ Implemented |
 | **FeatureFlagProvider** | Context provider for feature toggles (seeds from `@/content/flags`) | `src/components/ExperienceShell/FeatureFlagContext.tsx` | ✅ Implemented |
 | **ScrollRevealProvider** | Context for scroll-triggered animations (placeholder for future IntersectionObserver logic) | `src/components/ExperienceShell/ScrollRevealContext.tsx` | ✅ Implemented |
-| **HeroCommandPanel** | Headline, command snippet, copy-to-clipboard control, documentation CTA | `src/components/HeroCommandPanel/` | ⏳ Planned (I2.T2) |
-| **VisualSimulationWindow** | Glassmorphic terminal mockup with animations, fallback static image for mobile | `src/components/VisualSimulationWindow/` | ⏳ Planned (I2+) |
+| **HeroCommandPanel** | Headline, command snippet, copy-to-clipboard control, documentation CTA | `src/components/HeroCommandPanel/` | ✅ Implemented (I2.T1) |
+| **VisualSimulationWindow** | Glassmorphic terminal mockup with animations, fallback static image for mobile | `src/components/VisualSimulationWindow/` | ✅ Implemented (I2.T2) |
 | **FeatureBentoGrid** | Responsive grid of feature cards with hover glows and scroll observers | `src/components/FeatureBentoGrid/` | ⏳ Planned (I2+) |
-| **IntegrationStatusBar** | GitHub star count fetcher with retries, skeleton state, fallback badge | `src/components/IntegrationStatusBar/` | ⏳ Planned (I2.T3) |
+| **IntegrationStatusBar** | GitHub star count fetcher with retries, skeleton state, fallback badge | `src/components/IntegrationStatusBar/` | ✅ Implemented (I2.T3) |
 | **ContentConfigModule** | Centralizes typed content (`HeroContent`, `FeatureCard`, `ExternalLink`, flags) | `src/content/index.ts` | ✅ Implemented |
 
 ### Content System & Data Flow
@@ -129,8 +133,8 @@ function MyComponent() {
 
   return (
     <>
-      {isEnabled('clipboard-interaction') && <CopyButton />}
-      {isEnabled('github-stars') && <StarCount />}
+      {isEnabled('clipboardInteractions') && <CopyButton />}
+      {isEnabled('enableGithubStars') && <StarCount />}
     </>
   )
 }
@@ -139,13 +143,18 @@ function MyComponent() {
 To toggle a flag, edit `src/content/flags.ts`:
 
 ```typescript
-export const featureFlags: Record<string, FeatureFlag> = {
-  'clipboard-interaction': {
-    key: 'clipboard-interaction',
-    enabled: true, // ← Change to false to disable
-    description: 'Enable copy-to-clipboard for install command',
+export const featureFlags: readonly FeatureFlag[] = [
+  {
+    key: 'enableGithubStars',
+    description: 'Fetch GitHub stars for telemetry badge.',
+    enabled: false,
   },
-}
+  {
+    key: 'clipboardInteractions',
+    description: 'Allow HeroCommandPanel copy-to-clipboard action.',
+    enabled: true,
+  },
+] as const
 ```
 
 <!-- anchor: artifact-pointers -->
@@ -155,8 +164,8 @@ This project maintains living architectural documentation:
 
 - **[Component Diagram](docs/diagrams/component_overview.mmd)** (Mermaid) — Visualizes ExperienceShell, section modules, content flow, and hook relationships
 - **[Data Model ERD](docs/diagrams/data_model_erd.puml)** (PlantUML) — Captures typed content entities and their relationships
-- **Journey Sequence Diagram** (PlantUML) — Documents user flows for clipboard and GitHub interactions *(Planned: I2.T2)*
-- **GitHub Integration Spec** (Markdown) — Defines API contract, caching, fallback semantics *(Planned: I2.T3)*
+- **[Journey Sequence Diagram](docs/diagrams/journey_install_sequence.puml)** (PlantUML) — Documents the hero → copy → telemetry flow
+- **[GitHub Integration Spec](api/github_star_fetch.md)** (Markdown) — Defines API contract, caching, fallback semantics
 - **Verification Checklist** (Markdown) — CI/Lighthouse/Playwright gates *(Planned: I3.T4)*
 
 ## 🎨 Aura Design System
@@ -338,6 +347,82 @@ docker system prune -a
 docker build -t codemachine-landing .
 ```
 
+### Clipboard Issues
+
+The hero command panel relies on the async Clipboard API but carries a built-in fallback that selects the install command and announces instructions via an `aria-live="polite"` status message.
+
+**Copy button not working:**
+- **Secure context:** Clipboard writes require HTTPS (or `http://localhost`). Make sure you are not previewing the site over plain HTTP on a remote host.
+- **Permissions:** Safari/Firefox may show a permission dialog the first time you press the copy button. Accept the prompt; if you previously denied it, open the browser’s page info (🔒 icon) and reset clipboard permissions.
+- **Enterprise policies:** Some managed browsers disable clipboard access entirely. In those situations the fallback path below is triggered automatically.
+
+**Fallback experience:**
+- Whenever the Clipboard API throws, `useClipboardCommand` marks the status as `error`, selects the `<code>` element, and surfaces the helper text “Command highlighted — press Ctrl+C” so keyboard-only flows work reliably.
+- Analytics events `hero_copy_success` / `hero_copy_fallback` appear in the console (or analytics endpoint) to help QA confirm the flow you hit.
+
+**Testing clipboard functionality:**
+```bash
+# Development (localhost is secure context)
+pnpm run dev
+
+# Production preview (use HTTPS or localhost)
+pnpm run build && pnpm run preview
+```
+
+**Manual copy workaround:**
+If the copy button fails, click anywhere inside the command block (it uses `select-all`) and press `Ctrl+C` (Windows/Linux) or `Cmd+C` (macOS). The helper text only appears when the hook encounters an error, so seeing it confirms the fallback kicked in.
+
+**Feature flag control:**
+Clipboard interactions can be toggled in `src/content/flags.ts`:
+```typescript
+{
+  key: 'clipboardInteractions',
+  description: 'Allow HeroCommandPanel copy-to-clipboard action.',
+  enabled: false, // Disable clipboard button entirely
+}
+```
+
+### GitHub Star Badge Issues
+
+The `IntegrationStatusBar` fetches live star counts, caches them for six hours, and now doubles as a link to the GitHub repo so visitors can verify telemetry themselves.
+
+**Star count showing fallback value:**
+- **Rate limits or timeouts:** GitHub caps unauthenticated calls at 60/hour. When the API returns 403 or times out, the badge falls back to `buildFallbackStarCopy()` (`"100+ Stars"`) and surfaces a `github_stars_fallback` analytics event.
+- **Offline / network issues:** Cached data is used automatically. If no cache exists, the fallback copy renders along with a console warning.
+- **Feature disabled:** When the `enableGithubStars` flag is `false`, the component intentionally renders the fallback and skips any network work.
+
+**Badge click blocked:**
+- The badge is an anchor pointing to `https://github.com/<owner>/<repo>`. Pop-up blockers that prevent background tabs can stop it from opening — allow the site to open new tabs for GitHub.com.
+- Keyboard users can tab to the badge; it carries the Aura focus ring and activates with Enter/Space just like any other link.
+
+**Checking rate limit status:**
+```bash
+# Check your current rate limit (requires curl)
+curl -I https://api.github.com/rate_limit
+
+# With authentication (higher limits)
+curl -H "Authorization: token YOUR_GITHUB_TOKEN" \
+  https://api.github.com/rate_limit
+```
+
+**Increasing rate limits:**
+1. Generate a GitHub Personal Access Token (PAT) at https://github.com/settings/tokens
+2. Add to `.env.local` or your shell:
+   ```bash
+   VITE_GITHUB_TOKEN=ghp_yourTokenHere
+   ```
+3. Restart the dev server so Vite reloads the env var.
+
+**Cache behavior:**
+- **Duration:** 6 hours by default, overridable via `VITE_GITHUB_STARS_TTL_HOURS`.
+- **Key:** `codemachine:metric:github-stars:{owner}/{repo}` (e.g., `codemachine:metric:github-stars:moazbuilds/CodeMachine-CLI`).
+- **Manual clear:** In DevTools, run `localStorage.removeItem('codemachine:metric:github-stars:moazbuilds/CodeMachine-CLI')` to force a fresh fetch.
+
+**Retry policy & analytics:**
+- Fetches run inside `requestIdleCallback`, retry up to two times (with linear backoff), then log warnings and trigger the fallback display/analytics event.
+- Successful cache hits / network fetches raise `github_stars_fetch` events with metadata describing whether the data came from cache or network.
+
+
 ### Getting Help
 
 - Check existing [GitHub Issues](https://github.com/moazbuilds/CodeMachine-Website/issues)
@@ -352,16 +437,20 @@ docker build -t codemachine-landing .
 - I1.T3: ExperienceShell architecture with contexts
 - I1.T4: README and component diagram (this document)
 
-### 🔄 Iteration I2 (Hero & Integrations) - NEXT
+### ✅ Iteration I2 (Hero & Integrations) - COMPLETE
 - I2.T1: Implement HeroCommandPanel with copy-to-clipboard
-- I2.T2: Build clipboard interaction hook and analytics
-- I2.T3: GitHub API integration for star count with fallback
-- I2.T4: Create journey sequence diagram
+- I2.T2: VisualSimulationWindow desktop/mobile variants with reduced-motion support
+- I2.T3: GitHub API integration for star count with retries + caching
+- I2.T4: ScrollReveal provider + accessibility/analytics polish
+
+### 🔄 Iteration I3 (Feature grid & docs) - NEXT
+- Build FeatureBentoGrid + supporting content blocks
+- Author journey/verification docs for remaining flows
+- Prep deployment + telemetry experiments
 
 ### 🔮 Future Iterations
-- **I3:** VisualSimulationWindow with terminal animations
-- **I4:** FeatureBentoGrid with scroll reveals
-- **I5:** Deployment pipeline and verification gates
+- Harden deployment pipeline and verification gates
+- Expand integration badges / telemetry visualizations
 
 ## 📄 License
 

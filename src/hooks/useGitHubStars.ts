@@ -17,6 +17,7 @@ import {
   GitHubRateLimitError,
   GitHubRequestTimeoutError,
 } from '@/lib/github'
+import { trackEvent } from '@/lib/analytics'
 
 const DEFAULT_CACHE_HOURS = 6
 
@@ -227,6 +228,11 @@ export function useGitHubStars(
         onMetricUpdate?.(metric)
 
         console.info(`[useGitHubStars] Successfully fetched and cached ${count} stars`)
+        trackEvent('github_stars_fetch', {
+          repo,
+          source: 'network',
+          count,
+        })
       }
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Unknown error')
@@ -242,6 +248,11 @@ export function useGitHubStars(
         } else {
           console.warn('[useGitHubStars] Fetch failed:', error.message)
         }
+
+        trackEvent('github_stars_fallback', {
+          repo,
+          reason: error.name ?? 'unknown',
+        })
       }
     } finally {
       if (isMountedRef.current) {
@@ -287,8 +298,18 @@ export function useGitHubStars(
       if (stale) {
         console.info('[useGitHubStars] Cache is stale, scheduling refresh')
         scheduleFetch()
+        trackEvent('github_stars_fetch', {
+          repo,
+          source: 'cache_stale',
+          count: cached.count,
+        })
       } else {
         console.info('[useGitHubStars] Using fresh cache')
+        trackEvent('github_stars_fetch', {
+          repo,
+          source: 'cache_fresh',
+          count: cached.count,
+        })
       }
     } else {
       // No cache, fetch immediately

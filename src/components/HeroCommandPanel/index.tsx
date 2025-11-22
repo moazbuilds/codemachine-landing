@@ -21,27 +21,19 @@
  * Architecture (from src/components/ExperienceShell/index.tsx:*):
  * - Consumes HeroContent from @/content/hero
  * - Uses FeatureFlagContext for clipboard gating
- * - Emits analytics via console.log stubs (future: shared trackEvent helper)
+ * - Emits analytics via shared trackEvent helper
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { ExternalLink } from 'lucide-react'
 import { heroContent } from '@/content'
 import { useFeatureFlag } from '@/components/ExperienceShell/FeatureFlagContext'
 import { useClipboardCommand } from '@/hooks/useClipboardCommand'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
+import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
 import { CopyButton } from './CopyButton'
 import { cn } from '@/lib/utils'
-
-/**
- * Analytics helper stub - logs events to console
- * TODO (I3+): Replace with shared trackEvent helper when analytics provider is integrated
- */
-function trackEvent(
-  eventName: string,
-  properties?: Record<string, unknown>
-): void {
-  console.log(`[Analytics Event] ${eventName}`, properties)
-}
+import { trackEvent } from '@/lib/analytics'
 
 /**
  * HeroCommandPanel - Primary landing section with command interaction
@@ -61,8 +53,10 @@ function trackEvent(
  */
 export function HeroCommandPanel() {
   const { isEnabled } = useFeatureFlag()
-  const [isVisible, setIsVisible] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
+  const isVisible = useScrollReveal(sectionRef)
+  const { reducedMotion } = useScrollRevealContext()
+  const heroVisible = reducedMotion || isVisible
 
   const clipboardEnabled = isEnabled('clipboardInteractions')
 
@@ -84,33 +78,6 @@ export function HeroCommandPanel() {
     },
   })
 
-  // IntersectionObserver for fade-in animation
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !isVisible) {
-            setIsVisible(true)
-            // Disconnect after first intersection to prevent re-triggering
-            observer.disconnect()
-          }
-        })
-      },
-      {
-        threshold: 0.1,
-        rootMargin: '0px 0px -100px 0px',
-      }
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => {
-      observer.disconnect()
-    }
-  }, [isVisible])
-
   // Handle docs link click
   const handleDocsClick = () => {
     trackEvent('hero_docs_click', {
@@ -128,7 +95,7 @@ export function HeroCommandPanel() {
         'hero-section',
         'relative mx-auto max-w-4xl',
         'px-6 py-16 md:py-24 lg:py-32',
-        isVisible && 'is-visible'
+        heroVisible && 'is-visible'
       )}
     >
       <div className="flex flex-col items-center gap-6 text-center">
@@ -139,7 +106,7 @@ export function HeroCommandPanel() {
             role="status"
             aria-label={`${heroContent.betaLabel} release`}
           >
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary-400" />
+            <span className="h-2 w-2 rounded-full bg-primary-400 motion-safe:animate-pulse" />
             <span className="label-telemetry text-primary-300">
               {heroContent.betaLabel}
             </span>

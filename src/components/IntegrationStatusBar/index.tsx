@@ -14,6 +14,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGitHubStars } from '@/hooks/useGitHubStars'
 import { buildFallbackStarCopy, isFeatureEnabled } from '@/content'
+import { trackEvent } from '@/lib/analytics'
 
 /**
  * Component props
@@ -55,6 +56,7 @@ export function IntegrationStatusBar({
 }: IntegrationStatusBarProps) {
   const repoName = repo.split('/').filter(Boolean).pop() ?? repo
   const fallbackCopy = fallbackLabel ?? buildFallbackStarCopy(repoName)
+  const repoUrl = `https://github.com/${repo}`
 
   // Check if GitHub stars feature is enabled
   const githubStarsEnabled = isFeatureEnabled('enableGithubStars')
@@ -112,6 +114,13 @@ export function IntegrationStatusBar({
   }
 
   const displayContent = getDisplayContent()
+  const handleBadgeClick = () => {
+    trackEvent('github_star_click', {
+      repo,
+      state: error ? 'error' : isStale ? 'stale' : 'live',
+      stars: starCount ?? undefined,
+    })
+  }
 
   /**
    * Render skeleton loading state
@@ -135,10 +144,13 @@ export function IntegrationStatusBar({
    * Render badge with star count or fallback
    */
   return (
-    <div
-      className={`glass-surface inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 shadow-lg transition-opacity duration-300 ${className}`}
-      aria-label={`GitHub repository stars: ${displayContent}`}
-      role="status"
+    <a
+      href={repoUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={handleBadgeClick}
+      className={`glass-surface inline-flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 shadow-lg transition-opacity duration-300 focus-ring-aura ${className}`}
+      aria-label={`Open GitHub repository (${displayContent})`}
     >
       {/* Star icon */}
       <svg
@@ -175,6 +187,6 @@ export function IntegrationStatusBar({
       <span className="sr-only" aria-live="polite" aria-atomic="true">
         {ariaLiveMessage}
       </span>
-    </div>
+    </a>
   )
 }
