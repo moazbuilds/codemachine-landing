@@ -1,33 +1,24 @@
 /**
- * VisualSimulationWindow Component
- * Referenced by: src/App.tsx
- * Task: I3.T3 - Enhanced with mobile fallback and lazy loading
- *
- * Desktop variant of the simulation window showing terminal panes, telemetry,
- * and animation tokens with glassmorphic styling and scroll-based reveal effects.
+ * VisualSimulationWindow Component - Aura Terminal Style
+ * High-fidelity terminal simulation matching the Aura design system
  *
  * Features:
- * - Glass-card styling with perspective transforms
- * - Scroll-triggered fade/perspective animations
- * - Multi-pane terminal simulation UI
- * - Respects prefers-reduced-motion
- * - Props-driven for reusability
- * - Mobile fallback screenshot (<35KB WebP) with lazy loading
- * - Deferred animations via requestIdleCallback
+ * - Split-pane TUI dashboard (Agent Hierarchy + Output Stream)
+ * - ASCII art CodeMachine logo
+ * - Syntax-highlighted code blocks
+ * - Session telemetry and system resources
+ * - Glass-card styling with window chrome
  */
 
-import { useRef, useEffect, useState, useCallback } from 'react'
-import { useScrollReveal } from '@/hooks/useScrollReveal'
-import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
-import { Terminal, Activity, Cpu } from 'lucide-react'
-import { trackEvent } from '@/lib/analytics'
+import { Command } from 'lucide-react'
 
+// Types exported for MobileCard
 export interface SimulationPane {
   id: string
   label: string
   icon: 'terminal' | 'activity' | 'cpu'
-  content: string[]
   accent: 'primary' | 'emerald' | 'blue'
+  content: string[]
 }
 
 export interface SimulationMetric {
@@ -36,329 +27,224 @@ export interface SimulationMetric {
   description: string
 }
 
-export interface VisualSimulationWindowProps {
-  panes?: SimulationPane[]
-  metrics?: SimulationMetric[]
-  className?: string
-}
-
-const defaultPanes: SimulationPane[] = [
-  {
-    id: 'install',
-    label: 'Installation',
-    icon: 'terminal',
-    accent: 'primary',
-    content: [
-      '$ npx @anthropic-ai/create-codemachine my-project',
-      'Creating a new CodeMachine project in my-project...',
-      '✓ Project scaffolded successfully',
-      '✓ Dependencies installed',
-      '✓ Git repository initialized',
-      '',
-      'Next steps:',
-      '  cd my-project',
-      '  npm run dev',
-    ],
-  },
-  {
-    id: 'telemetry',
-    label: 'Live Telemetry',
-    icon: 'activity',
-    accent: 'emerald',
-    content: [
-      '[Analytics] Page loaded • Journey: Install',
-      '[Analytics] Hero copy attempt • Command: npx...',
-      '[Analytics] Clipboard write: Success ✓',
-      '[Analytics] Simulation scroll reveal triggered',
-      '[Telemetry] Build status: Passing',
-      '[Telemetry] Theme: Aura Dark',
-      '[Telemetry] Framework: React + Vite',
-    ],
-  },
-  {
-    id: 'performance',
-    label: 'Performance',
-    icon: 'cpu',
-    accent: 'blue',
-    content: [
-      'Build time: 847ms',
-      'Bundle size: 142.3 KB (gzip)',
-      'First paint: 0.6s',
-      'Interactive: 1.2s',
-      'Lighthouse score: 98/100',
-      '',
-      '⚡ Optimizations active:',
-      '  • Tree-shaking enabled',
-      '  • Code splitting configured',
-    ],
-  },
-]
-
-const defaultMetrics: SimulationMetric[] = [
-  {
-    label: 'Response Time',
-    value: '847ms',
-    description: 'Average build completion',
-  },
-  {
-    label: 'Bundle Size',
-    value: '142KB',
-    description: 'Gzipped production build',
-  },
-  {
-    label: 'Lighthouse',
-    value: '98/100',
-    description: 'Performance score',
-  },
-]
-
-const iconMap = {
-  terminal: Terminal,
-  activity: Activity,
-  cpu: Cpu,
-}
-
-const accentColorMap = {
-  primary: 'text-primary-400 border-primary-500/30',
-  emerald: 'text-emerald-400 border-emerald-500/30',
-  blue: 'text-blue-400 border-blue-500/30',
-}
-
-const glowColorMap = {
-  primary: 'shadow-primary-500/20',
-  emerald: 'shadow-emerald-500/20',
-  blue: 'shadow-blue-500/20',
-}
-
-export function VisualSimulationWindow({
-  panes = defaultPanes,
-  metrics = defaultMetrics,
-  className = '',
-}: VisualSimulationWindowProps) {
-  const containerRef = useRef<HTMLElement>(null)
-  const isVisible = useScrollReveal(containerRef)
-  const { reducedMotion } = useScrollRevealContext()
-  const revealActive = reducedMotion || isVisible
-  const [imageLoaded, setImageLoaded] = useState(false)
-  const [idleAnimationsReady, setIdleAnimationsReady] = useState(false)
-  const handleImageLoad = useCallback(() => {
-    setImageLoaded((prev) => {
-      if (!prev) {
-        trackEvent('simulation_play', { surface: 'mobile_fallback' })
-      }
-      return true
-    })
-  }, [])
-
-  // Track analytics when visible
-  useEffect(() => {
-    if (isVisible) {
-      trackEvent('simulation_play', { surface: 'desktop' })
-    }
-  }, [isVisible])
-
-  // Defer heavy animations until main thread is idle
-  useEffect(() => {
-    if (!isVisible || reducedMotion) return
-
-    // Use requestIdleCallback with setTimeout fallback for Safari
-    if (typeof window !== 'undefined') {
-      const deferAnimations = () => {
-        setIdleAnimationsReady(true)
-      }
-
-      if ('requestIdleCallback' in window) {
-        const idleCallbackId = window.requestIdleCallback(deferAnimations, {
-          timeout: 2000,
-        })
-        return () => window.cancelIdleCallback(idleCallbackId)
-      } else {
-        const timeoutId = window.setTimeout(deferAnimations, 100)
-        return () => window.clearTimeout(timeoutId)
-      }
-    }
-  }, [isVisible, reducedMotion])
-
+export function VisualSimulationWindow() {
   return (
-    <section
-      ref={containerRef}
-      id="simulation"
-      aria-label="Live simulation window"
-      className={`relative mx-auto max-w-6xl py-16 content-visibility-auto ${className}`}
-    >
-      {/* Section Header */}
-      <div className="mb-8 text-center">
-        <p className="label-telemetry text-neutral-500 mb-3">Live Preview</p>
-        <h2 className="heading-section text-gradient-primary mb-4">
-          See CodeMachine in Action
+    <section className="max-w-5xl mx-auto px-6 mb-20 relative">
+      {/* Marketing Header */}
+      <div className="text-center mb-8 space-y-3">
+        <h2 className="text-2xl md:text-3xl font-semibold text-white tracking-tight font-sans">
+          Watch AI Agents Work in Real-Time
         </h2>
-        <p className="text-neutral-400 max-w-2xl mx-auto">
-          Watch the installation flow, telemetry streams, and performance metrics
-          in real-time as you interact with the hero command panel above.
+        <p className="text-neutral-400 text-sm md:text-base max-w-2xl mx-auto font-sans">
+          See how CodeMachine orchestrates multiple AI engines to transform your specifications into production-ready code—autonomously.
         </p>
       </div>
 
-      {/* Mobile Fallback Screenshot (hidden on desktop) */}
-      <picture
-        className={`md:hidden block mb-4 transition-opacity duration-300 ${
-          imageLoaded ? 'opacity-100 lazy-loaded' : 'opacity-0'
-        }`}
-        aria-hidden={imageLoaded ? undefined : 'true'}
-      >
-        <source type="image/webp" srcSet="/mobile-sim.webp" />
-        <img
-          src="/mobile-sim.jpg"
-          alt="CodeMachine simulation window showing installation, telemetry, and performance metrics"
-          loading="lazy"
-          decoding="async"
-          width="750"
-          height="563"
-          sizes="(max-width: 768px) 100vw, 750px"
-          fetchPriority="low"
-          onLoad={handleImageLoad}
-          className="w-full rounded-2xl lazy-placeholder lazy-img-4-3 will-change-opacity"
-          style={{ aspectRatio: '4/3' }}
-        />
-      </picture>
+      {/* Glow behind window - Cyan branding */}
+      <div className="absolute -inset-1 bg-gradient-to-b from-cyan-500/20 to-transparent rounded-xl blur-xl opacity-20 group-hover:opacity-30 transition duration-1000" />
 
-      {/* Desktop Simulation Window */}
-      <div
-        className={`hidden md:block transition-all duration-700 motion-reduce:transition-none motion-reduce:transform-none ${
-          revealActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-        style={{
-          transform: reducedMotion
-            ? 'none'
-            : revealActive
-              ? 'perspective(1000px) rotateX(0deg)'
-              : 'perspective(1000px) rotateX(5deg)',
-        }}
-      >
-        {/* Glass Container */}
-        <div className="glass-surface rounded-2xl p-6 shadow-2xl border-white/10">
-          {/* Window Chrome */}
-          <div className="flex items-center gap-2 mb-6 pb-4 border-b border-white/5">
-            <div className="flex gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-500/60"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500/60"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500/60"></div>
-            </div>
-            <p className="text-xs text-neutral-500 ml-4 font-mono">
-              codemachine-simulation.terminal
-            </p>
+      <div className="glass-card rounded-xl overflow-hidden shadow-2xl relative bg-[#09090b]">
+        {/* Window Header */}
+        <div className="h-9 bg-[#18181b] border-b border-white/5 flex items-center px-4 justify-between select-none">
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-white/10 hover:bg-red-500/50 transition-colors" />
+            <div className="w-2.5 h-2.5 rounded-full bg-white/10 hover:bg-yellow-500/50 transition-colors" />
+            <div className="w-2.5 h-2.5 rounded-full bg-white/10 hover:bg-green-500/50 transition-colors" />
           </div>
-
-          {/* Panes Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {panes.map((pane, index) => {
-              const Icon = iconMap[pane.icon]
-              const accentClass = accentColorMap[pane.accent]
-              const glowClass = glowColorMap[pane.accent]
-
-              return (
-                <div
-                  key={pane.id}
-                  className={`glass-surface rounded-lg p-4 border ${accentClass} ${glowClass} transition-all duration-500 ${
-                    idleAnimationsReady && !reducedMotion
-                      ? 'will-change-transform'
-                      : ''
-                  }`}
-                  style={
-                    reducedMotion
-                      ? {
-                          opacity: 1,
-                          transform: 'none',
-                          transitionDelay: '0ms',
-                        }
-                      : {
-                          transitionDelay: revealActive
-                            ? `${index * 100}ms`
-                            : '0ms',
-                          opacity: revealActive ? 1 : 0,
-                          transform: revealActive
-                            ? 'translateY(0)'
-                            : 'translateY(20px)',
-                        }
-                  }
-                >
-                  {/* Pane Header */}
-                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-white/5">
-                    <Icon className="w-4 h-4" />
-                    <span className="text-xs font-mono uppercase tracking-wider">
-                      {pane.label}
-                    </span>
-                  </div>
-
-                  {/* Pane Content */}
-                  <div className="font-mono text-xs leading-relaxed space-y-1">
-                    {pane.content.map((line, lineIndex) => (
-                      <div
-                        key={lineIndex}
-                        className={
-                          line.startsWith('✓') || line.includes('Success')
-                            ? 'text-emerald-400'
-                            : line.startsWith('$')
-                              ? 'text-primary-300'
-                              : line.startsWith('[')
-                                ? 'text-blue-300'
-                                : line.startsWith('⚡')
-                                  ? 'text-yellow-400'
-                                  : 'text-neutral-400'
-                        }
-                      >
-                        {line || '\u00A0'}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
+          <div className="text-[10px] text-neutral-500 font-mono flex items-center gap-2">
+            <Command className="w-3 h-3" />
+            codemachine 0.7.0
           </div>
-
-          {/* Metrics Bar */}
-          <div className="flex flex-wrap gap-4 pt-4 border-t border-white/5">
-            {metrics.map((metric, index) => (
-              <div
-                key={metric.label}
-                className="flex-1 min-w-[140px]"
-                style={
-                  reducedMotion
-                    ? {
-                        opacity: 1,
-                        transform: 'none',
-                        transitionDelay: '0ms',
-                        transition: 'none',
-                      }
-                    : {
-                        transitionDelay: revealActive
-                          ? `${(panes.length + index) * 100}ms`
-                          : '0ms',
-                        opacity: revealActive ? 1 : 0,
-                        transform: revealActive ? 'scale(1)' : 'scale(0.95)',
-                        transition: 'all 0.5s',
-                      }
-                }
-              >
-                <p className="label-telemetry text-neutral-500 mb-1">
-                  {metric.label}
-                </p>
-                <p className="text-2xl font-light text-gradient-primary mb-1">
-                  {metric.value}
-                </p>
-                <p className="text-xs text-neutral-500">{metric.description}</p>
-              </div>
-            ))}
-          </div>
+          <div className="w-10" />
         </div>
 
-        {/* Ambient Glow Effect */}
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary-500/10 rounded-full blur-[100px] pointer-events-none -z-10"
-          style={{
-            opacity: reducedMotion ? 0.2 : revealActive ? 0.4 : 0,
-            transition: reducedMotion ? 'none' : 'opacity 1s ease-out',
-          }}
-        />
+        {/* TUI Dashboard Content */}
+        <div className="font-mono text-[12px] md:text-[13px] text-neutral-400 h-[300px] md:h-[400px] flex flex-col bg-[#09090b]">
+
+          {/* Main Split View */}
+          <div className="flex-1 flex overflow-hidden">
+
+            {/* Left Panel: Agent Hierarchy (Tree View) - Hidden on mobile */}
+            <div className="hidden md:flex w-1/3 border-r border-white/10 flex-col bg-black/20">
+              <div className="px-4 py-3 border-b border-white/5 text-[11px] text-white font-semibold flex items-center justify-between">
+                <span>Workflow Pipeline</span>
+              </div>
+              <div className="p-3 space-y-3 overflow-y-auto text-[11px]">
+                {/* Init (Completed) */}
+                <div className="flex items-start gap-2 opacity-60">
+                  <span className="text-cyan-400">●</span>
+                  <div className="flex-1">
+                    <div className="text-white">
+                      <span className="font-semibold">Init</span>{' '}
+                      <span className="text-neutral-500">(codex)</span>
+                      <span className="text-neutral-600 ml-2">• 00:01</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Principal Analyst - Checkpoint (Active) */}
+                <div className="flex items-start gap-2">
+                  <span className="text-cyan-400">●</span>
+                  <div className="flex-1">
+                    <div className="text-white">
+                      <span className="font-semibold">Principal Analyst - Checkpoint</span>{' '}
+                      <span className="text-neutral-500">(claude)</span>
+                      <span className="text-neutral-600 ml-2">• 00:03</span>
+                    </div>
+                    <div className="text-neutral-500 text-[10px] mt-1 ml-4">
+                      → Planning Phase →
+                    </div>
+                    <div className="ml-4 mt-2 space-y-1.5 text-[10px]">
+                      <div className="flex items-center gap-2">
+                        <span className="text-neutral-600">○</span>
+                        <span className="text-neutral-400">Blueprint Orchestrator</span>
+                        <span className="text-neutral-600">(codex)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-neutral-600">○</span>
+                        <span className="text-neutral-400">Plan Agent</span>
+                        <span className="text-neutral-600">(codex)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-neutral-600">○</span>
+                        <span className="text-neutral-400">Task Breakdown Agent</span>
+                        <span className="text-neutral-600">(codex)</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-neutral-600">○</span>
+                        <span className="text-neutral-400">Git Commit Agent</span>
+                        <span className="text-neutral-600">(cursor)</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Context Manager Agent (Pending) */}
+                <div className="flex items-start gap-2 opacity-40">
+                  <span className="text-neutral-600">○</span>
+                  <div className="flex-1">
+                    <div className="text-neutral-500">
+                      <span className="font-semibold">Context Manager Agent</span>{' '}
+                      <span className="text-neutral-600">(codex)</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Code Generation Agent (Pending) */}
+                <div className="flex items-start gap-2 opacity-40">
+                  <span className="text-neutral-600">○</span>
+                  <div className="flex-1">
+                    <div className="text-neutral-500">
+                      <span className="font-semibold">Code Generation Agent</span>{' '}
+                      <span className="text-neutral-600">(claude)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Panel: Live Output / Code - Full width on mobile */}
+            <div className="w-full md:w-2/3 flex flex-col bg-[#0c0c0e] relative">
+              {/* Single Tab - Output */}
+              <div className="flex border-b border-white/5">
+                <div className="px-4 py-3 text-white text-[11px] font-semibold">
+                  Output: Frontend MainAgent
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-4 font-mono text-xs space-y-2 overflow-hidden relative flex-1">
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-[#0c0c0e] z-10" />
+
+                {/* CodeMachine ASCII Logo Banner - Cyan branding */}
+                <div className="mb-6 select-none font-bold opacity-50 text-[10px] sm:text-[11px] text-cyan-400">
+                  <pre className="font-mono leading-tight m-0 p-0" style={{ fontFamily: 'monospace', letterSpacing: '0' }}>{`█▀▀ █▀█ █▀▄ █▀▀ █▀▄▀█ ▄▀█ █▀▀ █ █ █ █▄ █ █▀▀
+█▄▄ █▄█ █▄▀ ██▄ █ ▀ █ █▀█ █▄▄ █▀█ █ █ ▀█ ██▄`}</pre>
+                  <span className="text-neutral-600 font-normal tracking-normal block mt-2">
+                    v1.0.4 // ORCHESTRATION_ENGINE // READY
+                  </span>
+                </div>
+
+                <div className="text-neutral-500 flex gap-2">
+                  <span>[10:42:01]</span>
+                  <span className="text-cyan-400">INFO</span>
+                  <span>Initializing React scaffolding...</span>
+                </div>
+                <div className="text-neutral-500 flex gap-2">
+                  <span>[10:42:03]</span>
+                  <span className="text-cyan-400">AGENT</span>
+                  <span>Generating component structure based on spec...</span>
+                </div>
+
+                {/* Simulated Code Block - Cyan syntax highlighting */}
+                <div className="mt-4 p-3 bg-[#050505] rounded border border-cyan-500/20 text-neutral-300">
+                  <div className="flex gap-2 mb-2 border-b border-cyan-500/20 pb-2">
+                    <span className="text-cyan-400">write_file</span>
+                    <span className="text-neutral-500">./src/components/Dashboard.tsx</span>
+                  </div>
+                  <div className="opacity-80">
+                    <span className="text-cyan-400">export default function</span>{' '}
+                    <span className="text-cyan-300">Dashboard</span>
+                    {'() {\n'}
+                    {'  '}
+                    <span className="text-cyan-400">return</span>
+                    {' (\n'}
+                    {'    <'}
+                    <span className="text-cyan-200">div</span>{' '}
+                    <span className="text-cyan-300">className</span>
+                    {'='}
+                    <span className="text-neutral-400">"min-h-screen bg-zinc-950"</span>
+                    {'>\n'}
+                    {'      <'}
+                    <span className="text-cyan-300">Sidebar</span>
+                    {' />\n'}
+                    {'      <'}
+                    <span className="text-cyan-300">MainContent</span>
+                    {' />\n'}
+                    {'    </'}
+                    <span className="text-cyan-200">div</span>
+                    {'>\n'}
+                    {'  );\n'}
+                    {'}'}
+                    <span className="animate-pulse inline-block w-2 h-4 bg-cyan-400 align-middle ml-1" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Status Bar (Telemetry) */}
+          <div className="border-t border-white/10 bg-black/40">
+            {/* Row 1: Telemetry & Session - Cyan branding */}
+            <div className="flex items-center justify-between px-4 py-1.5 border-b border-white/5">
+              <div className="flex gap-4 text-[10px]">
+                <span className="text-neutral-500">SESSION ID:</span>
+                <span className="text-cyan-400">#8f3a-29b1</span>
+              </div>
+              <div className="flex gap-4 text-[10px]">
+                <div className="flex items-center gap-2">
+                  <span className="text-cyan-400">ORCHESTRATOR ACTIVE</span>
+                </div>
+                <span className="text-neutral-600">|</span>
+                <span className="text-neutral-400">TOKENS: 4,231</span>
+              </div>
+            </div>
+
+            {/* Row 2: System Resources */}
+            <div className="h-8 flex items-center px-4 justify-between text-[10px] text-neutral-600 bg-[#09090b]">
+              <div className="flex gap-4">
+                <span>CPU: 12%</span>
+                <span>MEM: 420MB</span>
+                <span>Threads: 4/12</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                <span>Awaiting Review</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
   )

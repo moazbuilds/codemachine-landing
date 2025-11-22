@@ -17,7 +17,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent } from 'react'
-import { Sparkles, Zap, Terminal, type LucideIcon } from 'lucide-react'
+import { Sparkles, Zap, Terminal, Cpu, FileCode, Clock, ShieldCheck, Rocket, type LucideIcon } from 'lucide-react'
 import clsx from 'clsx'
 import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
 import type { FeatureCard as FeatureCardType } from '@/content/types'
@@ -27,24 +27,11 @@ const iconMap: Record<FeatureCardType['icon'], LucideIcon> = {
   sparkles: Sparkles,
   zap: Zap,
   terminal: Terminal,
-}
-
-// Accent color mappings
-const accentColors: Record<FeatureCardType['accent'], {
-  icon: string
-  glow: string
-  ring: string
-}> = {
-  primary: {
-    icon: 'text-primary-400',
-    glow: 'from-primary-500/20 to-transparent',
-    ring: 'ring-primary-500/10',
-  },
-  emerald: {
-    icon: 'text-emerald-400',
-    glow: 'from-emerald-400/20 to-transparent',
-    ring: 'ring-emerald-400/10',
-  },
+  cpu: Cpu,
+  'file-code': FileCode,
+  clock: Clock,
+  'shield-check': ShieldCheck,
+  rocket: Rocket,
 }
 
 interface FeatureCardProps {
@@ -59,7 +46,6 @@ export function FeatureCard({ card, index }: FeatureCardProps) {
   const { register, unregister, reducedMotion } = useScrollRevealContext()
 
   const IconComponent = iconMap[card.icon] ?? Terminal
-  const colors = accentColors[card.accent] ?? accentColors.primary
 
   const gridSpanClasses = clsx(
     'col-span-1',
@@ -105,9 +91,10 @@ export function FeatureCard({ card, index }: FeatureCardProps) {
       id={`feature-${card.id}`}
       aria-describedby={`feature-${card.id}-description`}
       className={clsx(
-        'feature-card glass-surface group relative overflow-hidden rounded-2xl border border-white/5 p-6 shadow-lg shadow-black/20 transition-all duration-300 hover:border-white/10 hover:shadow-xl hover:shadow-black/30',
+        'feature-card p-6 bg-white/5 border border-white/10 rounded-lg hover:border-cyan-400/40 transition-all duration-300',
         gridSpanClasses,
-        isVisible && 'is-visible'
+        isVisible && 'is-visible',
+        card.gridSpan?.desktop?.includes('col-span-2') && 'md:col-span-2'
       )}
       data-tap-active={tapActive ? 'true' : undefined}
       data-span={desktopSpanAttribute}
@@ -121,75 +108,23 @@ export function FeatureCard({ card, index }: FeatureCardProps) {
             }
       }
     >
-      {/* Accent glow overlay (shown on hover if accentGlow enabled) */}
-      {card.accentGlow && (
-        <div
-          className={`
-            pointer-events-none
-            absolute
-            inset-0
-            opacity-0
-            transition-opacity
-            duration-500
-            group-hover:opacity-100
-            bg-gradient-radial
-            ${colors.glow}
-          `}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Inner glow ring on hover */}
-      <div
-        className={`
-          inner-glow-overlay
-          absolute
-          inset-0
-          rounded-2xl
-          opacity-0
-          ring-1
-          ring-inset
-          ring-white/10
-          transition-opacity
-          duration-300
-          group-hover:opacity-100
-        `}
-        aria-hidden="true"
-      />
-
       {/* Card content */}
-      <div className="relative z-10 flex flex-col gap-4">
-        {/* Icon */}
-        <div
-          className={clsx(
-            'feature-card__icon-shell flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 transition-all duration-300 group-hover:bg-white/10 ring-1 ring-inset',
-            colors.ring
-          )}
-        >
-          <IconComponent className={`h-6 w-6 ${colors.icon}`} aria-hidden="true" />
-        </div>
+      <div className="flex flex-col h-full gap-4">
+        {/* Icon - Simple, no box */}
+        <IconComponent className="w-5 h-5 text-cyan-400" aria-hidden="true" />
 
         {/* Text content */}
-        <div className="flex flex-col gap-2">
-          <h3 className="heading-section text-gradient-primary">
+        <div>
+          <h3 className="text-base font-medium text-white mb-2">
             {card.title}
           </h3>
           <p
             id={`feature-${card.id}-description`}
-            className="feature-card__description text-sm leading-relaxed text-neutral-400 transition-colors duration-300 group-hover:text-neutral-300"
+            className="text-sm text-neutral-500 leading-relaxed"
           >
             {card.description}
           </p>
         </div>
-
-        {/* Optional CTA label */}
-        {card.ctaLabel && (
-          <div className="mt-auto pt-2">
-            <span className="feature-card__cta label-telemetry text-primary-400 transition-colors duration-300 group-hover:text-primary-300">
-              {card.ctaLabel} →
-            </span>
-          </div>
-        )}
       </div>
     </article>
   )

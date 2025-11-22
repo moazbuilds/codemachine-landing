@@ -11,7 +11,7 @@ export const featureFlags: readonly FeatureFlag[] = [
   {
     key: 'enableGithubStars',
     description: 'Fetch GitHub stars for telemetry badge.',
-    enabled: false,
+    enabled: true,
   },
   {
     key: 'clipboardInteractions',

@@ -21,7 +21,9 @@
 
 import type { ReactNode } from 'react'
 import { NavigationBar } from '@/components/NavigationBar'
+import { AnnouncementBar } from '@/components/AnnouncementBar'
 import { FooterCluster } from '@/components/FooterCluster'
+import { AnimatedBackground } from '@/components/AnimatedBackground'
 import { BackgroundLayers } from './BackgroundLayers'
 import { ScrollRevealProvider } from './ScrollRevealContext'
 import { FeatureFlagProvider } from './FeatureFlagContext'
@@ -36,6 +38,9 @@ export function ExperienceShell({ children }: ExperienceShellProps) {
     <FeatureFlagProvider>
       <ScrollRevealProvider>
         <div className="relative min-h-screen overflow-hidden flex flex-col">
+          {/* Animated background with floating elements and glowing orbs */}
+          <AnimatedBackground />
+
           {/* CSS-only noise overlay using contain: paint to avoid reflow */}
           <div
             aria-hidden="true"
@@ -48,6 +53,14 @@ export function ExperienceShell({ children }: ExperienceShellProps) {
           {/* Background decorative layers (glows, gradients) */}
           <BackgroundLayers />
 
+          {/* Announcement bar */}
+          <AnnouncementBar
+            icon="https://api.iconify.design/mdi:rocket-launch.svg?color=white"
+            message="CodeMachine v0.7.0 with Bun and OpenTUI"
+            ctaText="Learn more"
+            ctaLink="https://github.com/moazbuilds/CodeMachine-CLI/releases/tag/v0.7.0"
+          />
+
           {/* Sticky navigation bar */}
           <NavigationBar />
 
@@ -55,11 +68,7 @@ export function ExperienceShell({ children }: ExperienceShellProps) {
           <main
             className="relative flex-1"
             style={{
-              zIndex: 'var(--z-content)',
-              paddingLeft: 'var(--shell-padding-x)',
-              paddingRight: 'var(--shell-padding-x)',
-              paddingTop: 'var(--shell-padding-y)',
-              paddingBottom: 'var(--shell-padding-y)',
+              zIndex: 'var(--z-content, 10)',
             }}
           >
             {/*

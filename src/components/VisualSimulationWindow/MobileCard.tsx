@@ -137,7 +137,7 @@ export function MobileCard({
 
                 {/* Pane Content - Truncated for mobile */}
                 <div className="font-mono text-[10px] leading-relaxed space-y-0.5">
-                  {pane.content.slice(0, 4).map((line, lineIndex) => (
+                  {pane.content.slice(0, 4).map((line: string, lineIndex: number) => (
                     <div
                       key={lineIndex}
                       className={

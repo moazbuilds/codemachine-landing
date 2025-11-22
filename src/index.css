@@ -9,13 +9,17 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CSS Custom Properties for Aura Theme */
+/* CSS Custom Properties for CodeMachine Theme */
 :root {
   --noise-opacity: 0.03;
   --noise-url: url('/textures/noise.svg');
   --glass-border: rgba(255, 255, 255, 0.08);
-  --bg-base-start: #020202;
-  --bg-base-end: #050505;
+  --bg-base-start: #0a1628;
+  --bg-base-end: #06111f;
+  --navy-dark: #0a1628;
+  --navy-mid: #1a2d47;
+  --blue-light: #6b9bd1;
+  --blue-bright: #8fb4e0;
 }
 
 /* Base Layer Customizations */
@@ -59,10 +63,10 @@
     }
   }
 
-  /* Custom scrollbar styling for webkit browsers */
+  /* Custom scrollbar styling for webkit browsers - Aura Minimalist Style */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
@@ -70,11 +74,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-neutral-700 rounded-full;
+    background: #333;
+    border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary-500;
+    background: #444;
   }
 
   /* Selection color */
@@ -93,8 +98,11 @@
 
   /* Glass morphism card base */
   .glass-surface {
-    @apply bg-neutral-900/60 backdrop-blur-xl border border-white/10;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    background: rgba(10, 10, 10, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
   }
 
   /* Focus ring for accessibility */
@@ -106,6 +114,19 @@
   .heading-hero {
     @apply text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter;
     line-height: 1.1;
+  }
+
+  /* Pixelated/Blocky title style inspired by banner */
+  .title-pixelated {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-shadow:
+      2px 2px 0 rgba(59, 130, 246, 0.5),
+      4px 4px 0 rgba(37, 99, 235, 0.3),
+      -1px -1px 0 rgba(139, 92, 246, 0.2);
+    filter: drop-shadow(0 0 20px rgba(107, 155, 209, 0.4));
   }
 
   .heading-section {

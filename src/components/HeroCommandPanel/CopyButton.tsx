@@ -94,20 +94,15 @@ export function CopyButton({
   // Button is disabled if status is 'copying' or explicitly disabled
   const isDisabled = disabled || status === 'copying'
 
-  // Dynamic styling based on status
+  // Dynamic styling based on status - Aura minimalist style
   const buttonStyles = cn(
     // Base styles
-    'relative flex items-center justify-center',
-    'h-10 w-10 rounded-lg',
-    'transition-all duration-200',
+    'ml-3 pl-3 border-l border-white/5 text-neutral-500 hover:text-white transition-colors',
     'focus-ring-aura',
 
     // State-specific colors
-    status === 'idle' &&
-      'bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-neutral-400 hover:text-white',
-    status === 'copying' && 'bg-primary-500/20 border border-primary-500/30 text-primary-400',
-    status === 'success' && 'bg-emerald-400/20 border border-emerald-400/30 text-emerald-400',
-    status === 'error' && 'bg-error-500/20 border border-error-500/30 text-error-500',
+    status === 'success' && 'text-emerald-400',
+    status === 'error' && 'text-error-500',
 
     // Disabled state
     isDisabled && 'cursor-not-allowed opacity-60',
@@ -117,7 +112,7 @@ export function CopyButton({
   )
 
   const iconStyles = cn(
-    'h-5 w-5',
+    'w-4 h-4',
     // Animate spinner during copying
     status === 'copying' && 'animate-spin'
   )

@@ -7,8 +7,8 @@ export { heroContent } from './hero'
 // Re-export feature content and visual assets
 export { featureCards, visualAssets } from './features'
 
-// Re-export external links, star metrics, and GitHub helpers
-export { externalLinks, starMetrics, buildFallbackStarCopy } from './links'
+// Re-export external links, AI integrations, tech stack, and GitHub helpers
+export { externalLinks, aiIntegrations, techStack, buildFallbackStarCopy } from './links'
 
 // Re-export feature flags and helpers
 export { featureFlags, isFeatureEnabled } from './flags'

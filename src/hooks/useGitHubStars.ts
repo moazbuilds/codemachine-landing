@@ -283,6 +283,9 @@ export function useGitHubStars(
    * Initialize hook: check cache and fetch if needed
    */
   useEffect(() => {
+    // Reset mounted flag (important for React StrictMode double-mount)
+    isMountedRef.current = true
+
     // Check cache first
     const cached = readCache(repo)
 

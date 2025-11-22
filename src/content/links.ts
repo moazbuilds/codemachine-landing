@@ -30,24 +30,59 @@ export const externalLinks: readonly ExternalLink[] = [
   },
   {
     label: 'Twitter',
-    href: 'https://twitter.com/codemachine',
-    description: 'Follow CodeMachine updates on Twitter.',
+    href: 'https://x.com/CodeMachineCLI',
+    description: 'Follow CodeMachine updates on Twitter/X.',
     icon: 'Twitter',
     ariaLabel: 'Follow us on Twitter (opens in new tab)',
-    location: ['footer'],
+    location: ['both'],
+    newTab: true,
+    analyticsEventName: 'social_link_click',
+  },
+  {
+    label: 'Discord',
+    href: 'https://discord.gg/qYDPwEeW',
+    description: 'Join the CodeMachine community on Discord.',
+    icon: 'MessageCircle',
+    ariaLabel: 'Join our Discord server (opens in new tab)',
+    location: ['both'],
+    newTab: true,
+    analyticsEventName: 'social_link_click',
+  },
+  {
+    label: 'Reddit',
+    href: 'https://www.reddit.com/r/CodeMachine/',
+    description: 'Join the CodeMachine subreddit.',
+    icon: 'MessageSquare',
+    ariaLabel: 'Visit our Reddit community (opens in new tab)',
+    location: ['both'],
     newTab: true,
     analyticsEventName: 'social_link_click',
   },
 ] as const
 
 /**
- * Star metrics displayed in telemetry badges.
- * Each metric includes a label and value.
+ * AI Engine integrations supported by CodeMachine.
+ * Shows which AI tools can be orchestrated.
  */
-export const starMetrics: readonly StarMetric[] = [
-  { label: 'Framework', value: 'React 18' },
-  { label: 'Build Tool', value: 'Vite 5' },
-  { label: 'Theme', value: 'Aura Dark' },
+export const aiIntegrations: readonly StarMetric[] = [
+  { label: 'Claude Code', value: 'Supported' },
+  { label: 'Cursor CLI', value: 'Supported' },
+  { label: 'Codex CLI', value: 'Supported' },
+  { label: 'OpenCode CLI', value: 'Supported' },
+  { label: 'Auggie CLI', value: 'Supported' },
+  { label: 'Gemini CLI', value: 'Coming Soon' },
+  { label: 'Qwen Coder', value: 'Coming Soon' },
+  { label: 'CodeRabbit CLI', value: 'Coming Soon' },
+] as const
+
+/**
+ * Technology stack metrics for display.
+ * Shows tech used in example projects.
+ */
+export const techStack: readonly StarMetric[] = [
+  { label: 'Runtime', value: 'Bun' },
+  { label: 'Language', value: 'TypeScript' },
+  { label: 'Proven On', value: 'React • FastAPI • NestJS' },
 ] as const
 
 /**

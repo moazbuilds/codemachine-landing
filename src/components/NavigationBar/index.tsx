@@ -19,17 +19,25 @@
  */
 
 import { useCallback, useState, useEffect, useRef } from 'react'
-import { Terminal, Menu, X } from 'lucide-react'
 import { externalLinks } from '@/content'
 import type { ExternalLink } from '@/content'
 import { trackEvent } from '@/lib/analytics'
 import { NavLinks } from './NavLinks'
 import type { NavLinksVariant } from './NavLinks'
+import { GitHubStars } from './GitHubStars'
 
 export function NavigationBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const drawerRef = useRef<HTMLDivElement>(null)
   const toggleButtonRef = useRef<HTMLButtonElement>(null)
+
+  // Find GitHub link from external links
+  const githubLink = externalLinks.find(link => link.label === 'GitHub')
+
+  // Filter only social links (Twitter, Discord, Reddit) for navigation
+  const socialLinks = externalLinks.filter(link =>
+    ['Twitter', 'Discord', 'Reddit'].includes(link.label)
+  )
 
   const focusToggleButton = useCallback(() => {
     if (!toggleButtonRef.current) return
@@ -37,18 +45,6 @@ export function NavigationBar() {
       toggleButtonRef.current?.focus()
     })
   }, [])
-
-  const toggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen((prev) => {
-      const next = !prev
-
-      if (!next) {
-        focusToggleButton()
-      }
-
-      return next
-    })
-  }, [focusToggleButton])
 
   const closeMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((prev) => {
@@ -61,7 +57,10 @@ export function NavigationBar() {
     })
   }, [focusToggleButton])
 
-  const handleLinkClick = (link: ExternalLink, context: { variant: NavLinksVariant }) => {
+  const handleLinkClick = (
+    link: ExternalLink,
+    context: { variant: NavLinksVariant }
+  ) => {
     const eventName = link.analyticsEventName ?? 'external_link_click'
 
     trackEvent(eventName, {
@@ -114,7 +113,9 @@ export function NavigationBar() {
       if (!focusableElements || focusableElements.length === 0) return
 
       const firstElement = focusableElements[0] as HTMLElement
-      const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+      const lastElement = focusableElements[
+        focusableElements.length - 1
+      ] as HTMLElement
 
       if (e.shiftKey && document.activeElement === firstElement) {
         e.preventDefault()
@@ -132,54 +133,37 @@ export function NavigationBar() {
   return (
     <>
       <nav
-        className="sticky top-0 glass-surface border-b border-white/10"
+        className="relative w-full"
         style={{
-          height: 'var(--shell-nav-height)',
-          zIndex: 'var(--z-navigation)',
+          height: 'var(--shell-nav-height, 56px)',
         }}
         aria-label="Primary"
       >
-        <div className="container mx-auto px-[var(--shell-padding-x)] h-full flex items-center justify-between">
-          {/* Logo / Branding */}
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary-500/10 border border-primary-500/20">
-              <Terminal
-                className="text-primary-400"
-                style={{ width: 'var(--nav-logo-size)', height: 'var(--nav-logo-size)' }}
-                aria-hidden="true"
+        <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-center gap-8">
+          {/* Centered Navigation - Social Links + GitHub Stars */}
+          <div className="flex items-center gap-8">
+            {/* Desktop Social Links - Twitter, Discord, Reddit */}
+            <div className="hidden md:flex items-center gap-6">
+              <NavLinks
+                links={socialLinks}
+                variant="desktop"
+                onLinkClick={handleLinkClick}
               />
             </div>
-            <span className="text-lg font-medium text-white hidden sm:inline">
-              CodeMachine
-            </span>
-          </div>
 
-          {/* Desktop Navigation Links */}
-          <div className="hidden md:flex items-center gap-6">
-            <NavLinks
-              links={externalLinks}
-              variant="desktop"
-              onLinkClick={handleLinkClick}
-            />
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            ref={toggleButtonRef}
-            type="button"
-            onClick={toggleMobileMenu}
-            className="md:hidden p-2 rounded-lg text-neutral-400 hover:text-white hover:bg-white/5 focus-ring-aura"
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-nav-drawer"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
+            {githubLink && (
+              <GitHubStars repoUrl={githubLink.href} />
             )}
-          </button>
+          </div>
         </div>
+
+        {/* Split line under navigation */}
+        <hr
+          className="absolute bottom-0 w-full h-px left-1/2 -translate-x-1/2 border-0 opacity-10"
+          style={{
+            backgroundImage: 'linear-gradient(270deg, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 52.07%, rgba(255, 255, 255, 0) 100%)'
+          }}
+        />
       </nav>
 
       {/* Mobile Drawer with Backdrop */}
@@ -188,7 +172,7 @@ export function NavigationBar() {
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-neutral-950/80 backdrop-blur-sm md:hidden mobile-drawer-backdrop"
-            style={{ zIndex: 'calc(var(--z-navigation) - 1)' }}
+            style={{ zIndex: 999 }}
             onClick={closeMobileMenu}
             aria-hidden="true"
           />
@@ -200,12 +184,22 @@ export function NavigationBar() {
             role="dialog"
             aria-modal="true"
             aria-label="Mobile navigation menu"
-            className="fixed top-[var(--shell-nav-height)] right-0 w-72 max-w-[85vw] h-[calc(100vh-var(--shell-nav-height))] glass-surface border-l border-white/10 md:hidden mobile-drawer-panel"
-            style={{ zIndex: 'var(--z-navigation)' }}
+            className="fixed top-0 right-0 w-72 max-w-[85vw] h-full md:hidden mobile-drawer-panel"
+            style={{
+              zIndex: 1000,
+              background: 'linear-gradient(to bottom, var(--bg-base-start), var(--bg-base-end))'
+            }}
           >
             <div className="p-4 flex flex-col gap-2 h-full overflow-y-auto">
+              {/* GitHub Stars Badge in mobile */}
+              {githubLink && (
+                <div className="mb-4">
+                  <GitHubStars repoUrl={githubLink.href} className="w-full justify-center" />
+                </div>
+              )}
+
               <NavLinks
-                links={externalLinks}
+                links={socialLinks}
                 variant="mobile"
                 onLinkClick={handleLinkClick}
               />

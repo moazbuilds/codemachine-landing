@@ -2,38 +2,56 @@
  * BackgroundLayers Component
  * Referenced by: src/components/ExperienceShell/index.tsx:*
  *
- * Renders the Aura-themed background layers including:
- * - Noise texture overlay (from index.css)
- * - Ambient glows positioned at different corners
- * - Base gradient background
- *
- * Uses utilities from src/index.css (.ambient-glow) combined with
- * CSS noise overlay from src/styles/perf.css.
- * and design tokens from src/styles/tokens.css
+ * Renders terminal-themed background layers including:
+ * - Scanline effect
+ * - CRT screen curvature
+ * - Subtle grid pattern
+ * - Terminal glow effect
  */
 
 export function BackgroundLayers() {
   return (
     <>
-      {/* Top-left ambient glow */}
+      {/* Terminal Grid Background - More prominent */}
       <div
         aria-hidden="true"
-        className="ambient-glow w-96 h-96 bg-primary-600/20 -top-48 -left-48"
-        style={{ zIndex: 'var(--z-background)' }}
+        className="fixed inset-0 pointer-events-none opacity-[0.15]"
+        style={{
+          zIndex: 0,
+          backgroundSize: '20px 20px',
+          backgroundImage: 'linear-gradient(to right, rgba(34, 211, 238, 0.1) 1px, transparent 1px), linear-gradient(to bottom, rgba(34, 211, 238, 0.1) 1px, transparent 1px)',
+        }}
       />
 
-      {/* Bottom-right ambient glow */}
+      {/* Scanline Effect */}
       <div
         aria-hidden="true"
-        className="ambient-glow w-96 h-96 bg-blue-500/20 -bottom-48 -right-48"
-        style={{ zIndex: 'var(--z-background)' }}
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: 1,
+          background: 'repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15) 1px, transparent 1px, transparent 2px)',
+          backgroundSize: '100% 4px',
+        }}
       />
 
-      {/* Additional accent glow - center-right for depth */}
+      {/* CRT Glow Vignette */}
       <div
         aria-hidden="true"
-        className="ambient-glow w-80 h-80 bg-primary-500/15 top-1/2 -right-32 -translate-y-1/2"
-        style={{ zIndex: 'var(--z-background)' }}
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: 0,
+          background: 'radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.4) 100%)',
+        }}
+      />
+
+      {/* Terminal Green/Cyan Glow */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: -1,
+          boxShadow: 'inset 0 0 200px rgba(34, 211, 238, 0.05)',
+        }}
       />
     </>
   )

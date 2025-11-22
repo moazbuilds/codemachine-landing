@@ -5,11 +5,6 @@
   "buildCommand": "pnpm install --frozen-lockfile && pnpm run build",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --frozen-lockfile",
-  "env": {
-    "VITE_GITHUB_TOKEN": "@vite_github_token",
-    "VITE_GITHUB_STARS_TTL_HOURS": "@vite_github_stars_ttl_hours",
-    "VITE_ANALYTICS_ENDPOINT": "@vite_analytics_endpoint"
-  },
   "rewrites": [
     {
       "source": "/docs/(.*)",

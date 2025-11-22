@@ -31,9 +31,31 @@ import { useFeatureFlag } from '@/components/ExperienceShell/FeatureFlagContext'
 import { useClipboardCommand } from '@/hooks/useClipboardCommand'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
+import { useCursorGlow } from '@/hooks/useCursorGlow'
 import { CopyButton } from './CopyButton'
+import { GeometricDecor } from './GeometricDecor'
 import { cn } from '@/lib/utils'
 import { trackEvent } from '@/lib/analytics'
+
+// ASCII Art for CODE and MACHINE
+const CODE_TEXT = [
+  '   ██████╗ ██████╗ ██████╗ ███████╗',
+  '  ██╔════╝██╔═══██╗██╔══██╗██╔════╝',
+  '  ██║     ██║   ██║██║↓ ██║█████╗  ',
+  '  ██║     ██║   ██║██║  ██║██╔══╝  ',
+  '  ╚██████╗╚██████╔╝██████╔╝███████╗',
+  '   ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝',
+]
+
+const MACHINE_TEXT = [
+  '  ███╗   ███╗ █████╗  ██████╗██╗  ██╗██╗███╗   ██╗███████╗',
+  '  ████╗ ████║██╔══██╗██╔════╝██║  ██║██║████╗  ██║██╔════╝',
+  '  ██╔████╔██║███████║██║     ███████║██║██╔██╗ ██║█████╗  ',
+  '  ██║╚██╔╝██║██╔══██║██║     ██╔══██║██║██║╚██╗██║██╔══╝  ',
+  '  ██║ ╚═╝ ██║██║  ██║╚██████╗██║  ██║██║██║ ╚████║███████╗',
+  '  ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝╚══════╝',
+  '     >->__                  >>----------------------->    ',
+]
 
 /**
  * HeroCommandPanel - Primary landing section with command interaction
@@ -53,10 +75,16 @@ import { trackEvent } from '@/lib/analytics'
  */
 export function HeroCommandPanel() {
   const { isEnabled } = useFeatureFlag()
-  const sectionRef = useRef<HTMLElement>(null)
+  const sectionRef = useRef<HTMLDivElement>(null)
   const isVisible = useScrollReveal(sectionRef)
   const { reducedMotion } = useScrollRevealContext()
   const heroVisible = reducedMotion || isVisible
+
+  // Cursor glow effect
+  const cursorGlowRef = useCursorGlow({
+    glowSize: 600,
+    enabled: !reducedMotion,
+  })
 
   const clipboardEnabled = isEnabled('clipboardInteractions')
 
@@ -87,116 +115,120 @@ export function HeroCommandPanel() {
   }
 
   return (
-    <section
-      ref={sectionRef}
-      id="hero"
-      aria-label="Hero command panel"
-      className={cn(
-        'hero-section',
-        'relative mx-auto max-w-4xl content-visibility-hero',
-        'px-6 py-16 md:py-24 lg:py-32',
-        heroVisible && 'is-visible'
+    <>
+      {/* Full-screen cursor glow overlay - Blue theme */}
+      {!reducedMotion && (
+        <div
+          ref={cursorGlowRef as any}
+          className="fixed inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(var(--glow-size, 600px) circle at var(--cursor-x, 50%) var(--cursor-y, 50%), rgba(107, 155, 209, 0.15), transparent 60%)',
+            zIndex: 1,
+          }}
+        />
       )}
-    >
-      <div className="flex flex-col items-center gap-6 text-center">
-        {/* Beta Badge */}
-        {heroContent.betaLabel && (
-          <div
-            className="inline-flex items-center gap-2 rounded-full border border-primary-500/30 bg-primary-500/10 px-4 py-1.5"
-            role="status"
-            aria-label={`${heroContent.betaLabel} release`}
-          >
-            <span className="h-2 w-2 rounded-full bg-primary-400 motion-safe:animate-pulse" />
-            <span className="label-telemetry text-primary-300">
-              {heroContent.betaLabel}
-            </span>
-          </div>
+
+      <section
+        ref={sectionRef}
+        id="hero"
+        aria-label="Hero command panel"
+        className={cn(
+          'hero-section',
+          'relative mx-auto max-w-7xl content-visibility-hero',
+          'px-6 pt-24 pb-16 min-h-screen flex items-center justify-center',
+          heroVisible && 'is-visible'
         )}
+        style={{ zIndex: 10 }}
+      >
+        {/* Geometric wireframe decorations */}
+        <GeometricDecor />
 
-        {/* Kicker */}
-        <p className="label-telemetry text-neutral-500">{heroContent.kicker}</p>
-
-        {/* Hero Headline */}
-        <h1 className="heading-hero text-gradient-primary glow-text-primary">
-          {heroContent.title}
-        </h1>
-
-        {/* Description */}
-        <p className="body-long max-w-2xl text-neutral-400">
-          {heroContent.description}
-        </p>
-
-        {/* Command Bar */}
-        <div className="command-bar-container mt-4 w-full max-w-2xl">
-          <div className="glass-surface flex items-center gap-3 rounded-xl border border-white/10 p-4 shadow-lg">
-            {/* Command Text */}
-            <code
-              ref={commandRef}
-              className="flex-1 select-all font-mono text-sm text-primary-300 md:text-base"
-              tabIndex={0}
-              role="textbox"
-              aria-label="Installation command"
-              aria-readonly="true"
-            >
-              {heroContent.installCommand}
-            </code>
-
-            {/* Copy Button */}
-            {clipboardEnabled ? (
-              <CopyButton status={status} onClick={copy} />
-            ) : (
-              <div
-                className="rounded-lg border border-dashed border-white/10 px-3 py-2 text-xs text-neutral-500"
-                role="status"
-              >
-                Copy disabled
-              </div>
-            )}
-          </div>
-
-          {/* Helper text for manual copy fallback */}
-          {status === 'error' && (
-            <p
-              className="mt-2 text-sm text-neutral-500"
-              role="alert"
-              aria-live="polite"
-            >
-              Command highlighted — press{' '}
-              <kbd className="rounded border border-white/10 bg-white/5 px-1.5 py-0.5 text-xs">
-                Ctrl+C
-              </kbd>{' '}
-              to copy
+        <div className="flex flex-col items-center gap-12 text-center w-full max-w-5xl">
+          {/* Tagline - Clean sans-serif */}
+          <div className="w-full max-w-sm">
+            <p className="text-xs md:text-sm text-blue-200/90 tracking-[0.35em] uppercase font-light leading-relaxed">
+              Orchestrate Without Limits.
             </p>
-          )}
-        </div>
+          </div>
 
-        {/* CTA Row */}
-        <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-          {/* Documentation Link */}
-          <a
-            href={heroContent.docsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleDocsClick}
-            className="btn-primary group inline-flex items-center gap-2"
-          >
-            <span>{heroContent.ctas.primary}</span>
-            <ExternalLink
-              className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              aria-hidden="true"
-            />
-          </a>
+          {/* ASCII Art Title - Container centered, text left-aligned */}
+          <div className="space-y-6 flex flex-col items-center w-full">
+            <div className="inline-block">
+              {/* CODE ASCII */}
+              <pre
+                className="text-cyan-400 leading-[1.2] select-none whitespace-pre overflow-visible text-left"
+                style={{
+                  fontFamily: '"Courier New", Courier, monospace',
+                  fontSize: 'clamp(10px, 2.5vw, 20px)',
+                  letterSpacing: '0',
+                  wordSpacing: '0',
+                }}
+              >
+                {CODE_TEXT.join('\n')}
+              </pre>
 
-          {/* Telemetry Label */}
-          <div
-            className="label-telemetry text-neutral-600"
-            role="status"
-            aria-label="System status"
-          >
-            {heroContent.telemetryLabel}
+              {/* MACHINE ASCII */}
+              <pre
+                className="text-cyan-400 leading-[1.2] select-none whitespace-pre overflow-visible text-left mt-6"
+                style={{
+                  fontFamily: '"Courier New", Courier, monospace',
+                  fontSize: 'clamp(10px, 2.5vw, 20px)',
+                  letterSpacing: '0',
+                  wordSpacing: '0',
+                }}
+              >
+                {MACHINE_TEXT.join('\n')}
+              </pre>
+            </div>
+          </div>
+
+          {/* Command snippet - Simple elegant style */}
+          <div className="flex flex-col gap-6 w-full max-w-2xl items-center mt-4">
+            <div className="relative group w-full max-w-lg">
+              {/* Cyan glow effect on hover */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500/30 via-cyan-400/40 to-cyan-500/30 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition duration-500" />
+
+              {/* Command box - Transparent glass */}
+              <div className="relative flex items-center justify-between px-5 py-3 bg-white/5 backdrop-blur-md border border-white/20 group-hover:border-cyan-400/60 rounded-xl shadow-lg transition-all duration-300">
+                <div className="flex items-center gap-3 flex-1 overflow-hidden">
+                  <span className="text-cyan-400 font-mono text-sm select-none">
+                    $
+                  </span>
+                  <code
+                    ref={commandRef}
+                    className="font-mono text-sm text-white/90 bg-transparent border-none focus:ring-0 p-0 truncate select-all"
+                    tabIndex={0}
+                    role="textbox"
+                    aria-label="Installation command"
+                    aria-readonly="true"
+                  >
+                    {heroContent.installCommand}
+                  </code>
+                </div>
+                {clipboardEnabled && (
+                  <CopyButton status={status} onClick={copy} />
+                )}
+              </div>
+            </div>
+
+            {/* Documentation link - Simple */}
+            <a
+              href={heroContent.docsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleDocsClick}
+              className="inline-flex items-center gap-2 text-white/70 hover:text-cyan-400 text-sm transition-colors group/link"
+            >
+              <span>Documentation</span>
+              <ExternalLink
+                className="w-3.5 h-3.5 group-hover/link:translate-x-0.5 transition-transform"
+                aria-hidden="true"
+              />
+            </a>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }

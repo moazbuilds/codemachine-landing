@@ -37,7 +37,7 @@ function getLucideIcon(iconName?: string): LucideIconComponent {
     return LucideIcons.ExternalLink
   }
 
-  const iconRegistry = LucideIcons as Record<
+  const iconRegistry = LucideIcons as unknown as Record<
     string,
     LucideIconComponent | undefined
   >
@@ -72,13 +72,13 @@ function getVariantClasses(variant: NavLinksVariant): string {
 
   switch (variant) {
     case 'desktop':
-      return `${baseClasses} px-3 py-2 hover:bg-white/5 text-sm font-medium`
+      return `${baseClasses} text-xs font-medium`
 
     case 'mobile':
       return `${baseClasses} justify-between px-4 py-3 hover:bg-white/5 text-sm font-medium min-h-[48px]`
 
     case 'footer':
-      return `${baseClasses} px-2 py-1.5 hover:bg-white/5 text-xs`
+      return `${baseClasses} text-xs`
 
     default:
       return baseClasses
@@ -91,7 +91,7 @@ function getVariantClasses(variant: NavLinksVariant): string {
 function getIconSize(variant: NavLinksVariant): string {
   switch (variant) {
     case 'desktop':
-      return 'w-4 h-4'
+      return 'w-3.5 h-3.5'
     case 'mobile':
       return 'w-5 h-5'
     case 'footer':

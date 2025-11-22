@@ -30,40 +30,23 @@ export function FeatureBentoGrid() {
     <section
       id="features"
       aria-labelledby="features-heading"
-      className="mx-auto max-w-7xl px-6 py-16 md:py-24 content-visibility-bento"
+      className="relative z-10 py-24"
     >
-      {/* Section heading */}
-      <div className="mb-12 flex flex-col gap-4">
-        <h2
-          id="features-heading"
-          className="heading-hero text-gradient-primary"
-        >
-          Features
-        </h2>
-        <p className="max-w-2xl text-lg text-neutral-400">
-          Built with modern tools and patterns for a seamless developer experience.
-        </p>
-      </div>
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Section heading - Aura Style */}
+        <div className="flex flex-col mb-16 gap-4">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-semibold text-white mb-2 tracking-tight">
+              Engineered for Velocity
+            </h2>
+            <p className="text-neutral-500 text-sm max-w-md">
+              A complete engine for software generation, built to handle complexity without breaking.
+            </p>
+          </div>
+        </div>
 
-      {/* Bento grid layout with isolated grid background */}
-      <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-neutral-950/40 p-6">
-        <div
-          aria-hidden="true"
-          className="bg-grid-pattern absolute inset-0 opacity-40"
-        />
-        <div
-          className="
-            bento-grid
-            relative
-            grid
-            grid-cols-1
-            gap-4
-            md:grid-cols-2
-            lg:grid-cols-3
-            lg:gap-6
-          "
-          role="list"
-        >
+        {/* Grid - Aura Style */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {featureCards.map((card, index) => (
             <FeatureCard
               key={card.id}

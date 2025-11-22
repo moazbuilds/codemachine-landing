@@ -11,13 +11,13 @@ export const heroContent: HeroContent = {
   title: 'CodeMachine',
   kicker: 'Autonomous Dev Agents',
   description:
-    'This workspace ships with a React 18 + Vite baseline, Tailwind Aura theming, and content scaffolding so future agents can focus on product features instead of setup.',
+    'CLI-native orchestration engine that runs coordinated multi-agent workflows directly on your local machine. Transform specifications into production-ready software with autonomous AI agents.',
   ctas: {
     primary: 'Get Started',
     secondary: 'Learn More',
   },
-  telemetryLabel: 'Build Status: Ready • Framework: React 18 • Bundler: Vite',
-  installCommand: 'npm install -g codemachine-cli',
+  telemetryLabel: '25-37× Faster • Multi-Agent Orchestration • Production-Ready',
+  installCommand: 'npm install -g codemachine',
   startCommand: 'codemachine init',
   betaLabel: 'Beta',
   docsUrl: 'https://docs.codemachine.co',

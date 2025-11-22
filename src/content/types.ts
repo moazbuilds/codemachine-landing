@@ -1,6 +1,6 @@
 import type { EventName } from '@/lib/analytics'
 
-export type IconKey = 'sparkles' | 'zap' | 'terminal'
+export type IconKey = 'sparkles' | 'zap' | 'terminal' | 'cpu' | 'file-code' | 'clock' | 'shield-check' | 'rocket'
 
 export type ExternalLinkLocation = 'nav' | 'footer' | 'both'
 
@@ -9,7 +9,7 @@ export type FeatureCard = {
   title: string
   description: string
   icon: IconKey
-  accent: 'primary' | 'emerald'
+  accent: 'primary' | 'emerald' | 'amber' | 'blue' | 'green' | 'purple'
   gridSpan?: {
     desktop?: string
     mobile?: string

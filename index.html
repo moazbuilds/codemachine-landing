@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#020202" />
     <meta name="description" content="CodeMachine - Autonomous AI agents for your codebase. Experience the future of development with intelligent, context-aware automation." />
 
     <!-- Open Graph / Social Media Meta Tags -->
@@ -66,14 +66,25 @@
         z-index: 2;
       }
 
-      /* Loading state */
+      /* Loading state - Cyan branding */
       .loading {
         display: flex;
         align-items: center;
         justify-content: center;
         min-height: 100vh;
-        color: #a78bfa;
+        color: #22d3ee;
         font-family: 'JetBrains Mono', monospace;
+        font-size: 14px;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 0.6;
+        }
+        50% {
+          opacity: 1;
+        }
       }
     </style>
 
