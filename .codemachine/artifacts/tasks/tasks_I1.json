@@ -1,0 +1,107 @@
+[
+  {
+    "task_id": "I1.T1",
+    "iteration_id": "I1",
+    "iteration_goal": "Stand up the React + Tailwind workspace, encode Aura theming, and define the typed content/diagram artifacts required for later feature work.",
+    "description": "Scaffold a Vite + React 18 + TypeScript project with Tailwind Aura configuration, Inter/JetBrains fonts, PostCSS setup, pnpm scripts, and Docker parity baseline; include base noise texture, Lucide bootstrapping, and Lighthouse-friendly meta tags inside `index.html` so later tasks tweak UI only.",
+    "agent_type_hint": "SetupAgent",
+    "inputs": "Section 2 (Core Architecture), Section 3 (Directory Structure), Section 5 requirements for Aura theming.",
+    "target_files": [
+      "package.json",
+      "pnpm-lock.yaml",
+      "tsconfig.json",
+      "vite.config.ts",
+      "tailwind.config.ts",
+      "postcss.config.cjs",
+      "Dockerfile",
+      "src/main.tsx",
+      "src/index.css",
+      "public/index.html"
+    ],
+    "input_files": [],
+    "deliverables": "Compilable workspace with scripts (`dev`, `build`, `preview`), Tailwind config featuring Aura palette/noise/glow utilities, HTML head with fonts + tailwind init, Dockerfile matching CI image.",
+    "acceptance_criteria": "`pnpm build` succeeds; Tailwind config exposes `neutral` + `primary` tokens and custom animations; HTML loads fonts/noise overlays per Section 5.1; repository root matches directory plan, and Docker image runs `pnpm build` without extra flags.",
+    "dependencies": [],
+    "parallelizable": false,
+    "done": true
+  },
+  {
+    "task_id": "I1.T2",
+    "iteration_id": "I1",
+    "iteration_goal": "Stand up the React + Tailwind workspace, encode Aura theming, and define the typed content/diagram artifacts required for later feature work.",
+    "description": "Implement typed content modules (HeroContent, FeatureCard, ExternalLink, FeatureFlag, StarMetric helpers) plus export barrel; generate the PlantUML ERD documenting these relationships and include render instructions in a doc comment.",
+    "agent_type_hint": "ContentAgent",
+    "inputs": "Section 3 (Data Model Overview), Section 2.1 artifact list.",
+    "target_files": [
+      "src/content/types.ts",
+      "src/content/hero.ts",
+      "src/content/features.ts",
+      "src/content/links.ts",
+      "src/content/flags.ts",
+      "src/content/index.ts",
+      "docs/diagrams/data_model_erd.puml"
+    ],
+    "input_files": [
+      "src/main.tsx"
+    ],
+    "deliverables": "Strongly typed config exports with default content matching the requirements, shared helper for GitHub fallback copy, ERD PlantUML file ready for rendering.",
+    "acceptance_criteria": "TypeScript builds without `any`; exported arrays/objects cover all properties listed in Section 3.0; ERD renders via plantuml.com without syntax errors; README or inline comments mention how to regenerate the ERD.",
+    "dependencies": [
+      "I1.T1"
+    ],
+    "parallelizable": false,
+    "done": true
+  },
+  {
+    "task_id": "I1.T3",
+    "iteration_id": "I1",
+    "iteration_goal": "Stand up the React + Tailwind workspace, encode Aura theming, and define the typed content/diagram artifacts required for later feature work.",
+    "description": "Create ExperienceShell layout with background layers, sticky navigation skeleton, shared providers (ScrollReveal context placeholder, FeatureFlag provider), and wire content modules into `App`, ensuring nav links already route to docs/GitHub stubs.",
+    "agent_type_hint": "FrontendAgent",
+    "inputs": "Section 2 (Key Components/Services), Section 5 user journeys.",
+    "target_files": [
+      "src/App.tsx",
+      "src/components/ExperienceShell/index.tsx",
+      "src/components/NavigationBar/index.tsx",
+      "src/components/ExperienceShell/BackgroundLayers.tsx",
+      "src/styles/tokens.css"
+    ],
+    "input_files": [
+      "src/main.tsx",
+      "src/content/index.ts",
+      "src/index.css"
+    ],
+    "deliverables": "Rendered page skeleton with Aura background noise/glows, nav placeholders (logo, docs/GitHub links), context providers ready for child sections, and instrumentation stubs for analytics logging.",
+    "acceptance_criteria": "App renders backgrounds + nav without hero content yet; lint/type-check passes; navigation uses `ExternalLink` data; providers expose contexts without runtime warnings; layout respects responsive guidelines and mobile nav toggles collapse gracefully even if menu still static.",
+    "dependencies": [
+      "I1.T1",
+      "I1.T2"
+    ],
+    "parallelizable": true,
+    "done": true
+  },
+  {
+    "task_id": "I1.T4",
+    "iteration_id": "I1",
+    "iteration_goal": "Stand up the React + Tailwind workspace, encode Aura theming, and define the typed content/diagram artifacts required for later feature work.",
+    "description": "Document the established architecture by drafting README onboarding steps and generating the Mermaid component diagram that maps ExperienceShell, content modules, hooks, and future sections, calling out where hero/simulation/feature blocks will slot in.",
+    "agent_type_hint": "DocumentationAgent",
+    "inputs": "Section 2 (Key Components), Section 2.1 (Artifact commitments), output of `I1.T3`.",
+    "target_files": [
+      "README.md",
+      "docs/diagrams/component_overview.mmd"
+    ],
+    "input_files": [
+      "src/App.tsx",
+      "src/components/ExperienceShell/index.tsx",
+      "src/content/index.ts"
+    ],
+    "deliverables": "README describing setup scripts, directory layout, and feature flag usage; Mermaid diagram consistent with Section 2 descriptions and referencing actual component file paths.",
+    "acceptance_criteria": "Diagram renders without syntax errors and matches component responsibilities; README includes badges for npm install command, development instructions, artifact pointers, and iteration overview; anchors noted for manifest.",
+    "dependencies": [
+      "I1.T3"
+    ],
+    "parallelizable": true,
+    "done": true
+  }
+]

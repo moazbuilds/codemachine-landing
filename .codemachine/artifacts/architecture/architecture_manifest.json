@@ -1,0 +1,334 @@
+{
+  "files": {
+    "01_Blueprint_Foundation.md": [
+      {
+        "key": "blueprint-foundation-root",
+        "line": 1,
+        "start_anchor": "<!-- anchor: blueprint-foundation-root -->",
+        "description": "01_Blueprint_Foundation.md"
+      },
+      {
+        "key": "1-0-project-scale",
+        "line": 4,
+        "start_anchor": "<!-- anchor: 1-0-project-scale -->",
+        "description": "1.0 Project Scale & Directives for Architects**"
+      },
+      {
+        "key": "2-0-standard-kit",
+        "line": 14,
+        "start_anchor": "<!-- anchor: 2-0-standard-kit -->",
+        "description": "2.0 The \"Standard Kit\" (Mandatory Technology Stack)**"
+      },
+      {
+        "key": "3-0-rulebook",
+        "line": 30,
+        "start_anchor": "<!-- anchor: 3-0-rulebook -->",
+        "description": "3.0 The \"Rulebook\" (Cross-Cutting Concerns)**"
+      },
+      {
+        "key": "4-0-blueprint",
+        "line": 44,
+        "start_anchor": "<!-- anchor: 4-0-blueprint -->",
+        "description": "4.0 The \"Blueprint\" (Core Components & Boundaries)**"
+      },
+      {
+        "key": "5-0-contract",
+        "line": 63,
+        "start_anchor": "<!-- anchor: 5-0-contract -->",
+        "description": "5.0 The \"Contract\" (API & Data Definitions)**"
+      },
+      {
+        "key": "6-0-safety-net",
+        "line": 79,
+        "start_anchor": "<!-- anchor: 6-0-safety-net -->",
+        "description": "6.0 The \"Safety Net\" (Ambiguities & Assumptions)**"
+      }
+    ],
+    "02_System_Structure_and_Data.md": [
+      {
+        "key": "system-architecture-blueprint",
+        "line": 1,
+        "start_anchor": "<!-- anchor: system-architecture-blueprint -->",
+        "description": "System Architecture Blueprint: CodeMachine Landing Page"
+      },
+      {
+        "key": "1-0-introduction-goals",
+        "line": 8,
+        "start_anchor": "<!-- anchor: 1-0-introduction-goals -->",
+        "description": "1. Introduction & Goals"
+      },
+      {
+        "key": "2-0-architectural-drivers",
+        "line": 20,
+        "start_anchor": "<!-- anchor: 2-0-architectural-drivers -->",
+        "description": "2. Architectural Drivers"
+      },
+      {
+        "key": "3-0-proposed-architecture",
+        "line": 27,
+        "start_anchor": "<!-- anchor: 3-0-proposed-architecture -->",
+        "description": "3. Proposed Architecture (Structural View)"
+      },
+      {
+        "key": "3-1-architectural-style",
+        "line": 30,
+        "start_anchor": "<!-- anchor: 3-1-architectural-style -->",
+        "description": "3.1. Architectural Style"
+      },
+      {
+        "key": "3-2-technology-stack",
+        "line": 35,
+        "start_anchor": "<!-- anchor: 3-2-technology-stack -->",
+        "description": "3.2. Technology Stack Summary"
+      },
+      {
+        "key": "3-3-system-context",
+        "line": 49,
+        "start_anchor": "<!-- anchor: 3-3-system-context -->",
+        "description": "3.3. System Context Diagram (C4 Level 1)"
+      },
+      {
+        "key": "3-4-container-diagram",
+        "line": 76,
+        "start_anchor": "<!-- anchor: 3-4-container-diagram -->",
+        "description": "3.4. Container Diagram (C4 Level 2)"
+      },
+      {
+        "key": "3-5-component-diagram",
+        "line": 109,
+        "start_anchor": "<!-- anchor: 3-5-component-diagram -->",
+        "description": "3.5. Component Diagram (C4 Level 3 - React SPA)"
+      },
+      {
+        "key": "3-6-data-model",
+        "line": 144,
+        "start_anchor": "<!-- anchor: 3-6-data-model -->",
+        "description": "3.6. Data Model Overview & ERD"
+      }
+    ],
+    "03_Behavior_and_Communication.md": [
+      {
+        "key": "3-0-proposed-architecture",
+        "line": 1,
+        "start_anchor": "<!-- anchor: 3-0-proposed-architecture -->",
+        "description": "3. Proposed Architecture (Behavioral View)"
+      }
+    ],
+    "04_Operational_Architecture.md": [
+      {
+        "key": "3-0-proposed-architecture-operational-view",
+        "line": 1,
+        "start_anchor": "<!-- anchor: 3-0-proposed-architecture-operational-view -->",
+        "description": "3. Proposed Architecture (Operational View)"
+      },
+      {
+        "key": "3-8-cross-cutting-concerns",
+        "line": 21,
+        "start_anchor": "<!-- anchor: 3-8-cross-cutting-concerns -->",
+        "description": "3.8. Cross-Cutting Concerns"
+      },
+      {
+        "key": "3-9-deployment-view",
+        "line": 40,
+        "start_anchor": "<!-- anchor: 3-9-deployment-view -->",
+        "description": "3.9. Deployment View"
+      },
+      {
+        "key": "3-9-1-deployment-controls",
+        "line": 76,
+        "start_anchor": "<!-- anchor: 3-9-1-deployment-controls -->",
+        "description": "3.9.1 Deployment Controls & Tooling"
+      },
+      {
+        "key": "3-9-2-observability-runbooks",
+        "line": 93,
+        "start_anchor": "<!-- anchor: 3-9-2-observability-runbooks -->",
+        "description": "3.9.2 Observability Runbooks"
+      }
+    ],
+    "05_Rationale_and_Future.md": [
+      {
+        "key": "4-0-design-rationale-trade-offs",
+        "line": 1,
+        "start_anchor": "<!-- anchor: 4-0-design-rationale-trade-offs -->",
+        "description": "4. Design Rationale & Trade-offs"
+      },
+      {
+        "key": "4-1-key-decisions-summary",
+        "line": 6,
+        "start_anchor": "<!-- anchor: 4-1-key-decisions-summary -->",
+        "description": "4.1. Key Decisions Summary"
+      },
+      {
+        "key": "4-2-alternatives-considered",
+        "line": 22,
+        "start_anchor": "<!-- anchor: 4-2-alternatives-considered -->",
+        "description": "4.2. Alternatives Considered"
+      },
+      {
+        "key": "4-3-known-risks-and-mitigation",
+        "line": 30,
+        "start_anchor": "<!-- anchor: 4-3-known-risks-and-mitigation -->",
+        "description": "4.3. Known Risks & Mitigation"
+      },
+      {
+        "key": "5-0-future-considerations",
+        "line": 38,
+        "start_anchor": "<!-- anchor: 5-0-future-considerations -->",
+        "description": "5. Future Considerations"
+      },
+      {
+        "key": "5-1-potential-evolution",
+        "line": 43,
+        "start_anchor": "<!-- anchor: 5-1-potential-evolution -->",
+        "description": "5.1. Potential Evolution"
+      },
+      {
+        "key": "5-2-areas-for-deeper-dive",
+        "line": 50,
+        "start_anchor": "<!-- anchor: 5-2-areas-for-deeper-dive -->",
+        "description": "5.2. Areas for Deeper Dive"
+      },
+      {
+        "key": "6-0-glossary",
+        "line": 57,
+        "start_anchor": "<!-- anchor: 6-0-glossary -->",
+        "description": "6. Glossary"
+      }
+    ],
+    "06_UI_UX_Architecture.md": [
+      {
+        "key": "ui-ux-architecture",
+        "line": 1,
+        "start_anchor": "<!-- anchor: ui-ux-architecture -->",
+        "description": "UI/UX Architecture: CodeMachine Landing Page"
+      },
+      {
+        "key": "1-design-system-specification",
+        "line": 7,
+        "start_anchor": "<!-- anchor: 1-design-system-specification -->",
+        "description": "1. Design System Specification"
+      },
+      {
+        "key": "1-1-color-palette",
+        "line": 12,
+        "start_anchor": "<!-- anchor: 1-1-color-palette -->",
+        "description": "1.1. Color Palette"
+      },
+      {
+        "key": "1-2-typography",
+        "line": 31,
+        "start_anchor": "<!-- anchor: 1-2-typography -->",
+        "description": "1.2. Typography"
+      },
+      {
+        "key": "1-3-spacing-and-sizing",
+        "line": 40,
+        "start_anchor": "<!-- anchor: 1-3-spacing-and-sizing -->",
+        "description": "1.3. Spacing & Sizing"
+      },
+      {
+        "key": "1-4-component-tokens",
+        "line": 49,
+        "start_anchor": "<!-- anchor: 1-4-component-tokens -->",
+        "description": "1.4. Component Tokens"
+      },
+      {
+        "key": "2-component-architecture",
+        "line": 59,
+        "start_anchor": "<!-- anchor: 2-component-architecture -->",
+        "description": "2. Component Architecture"
+      },
+      {
+        "key": "2-1-overview",
+        "line": 64,
+        "start_anchor": "<!-- anchor: 2-1-overview -->",
+        "description": "2.1. Overview"
+      },
+      {
+        "key": "2-2-core-component-spec",
+        "line": 72,
+        "start_anchor": "<!-- anchor: 2-2-core-component-spec -->",
+        "description": "2.2. Core Component Specification"
+      },
+      {
+        "key": "2-3-component-hierarchy",
+        "line": 86,
+        "start_anchor": "<!-- anchor: 2-3-component-hierarchy -->",
+        "description": "2.3. Component Hierarchy Diagram (PlantUML)"
+      },
+      {
+        "key": "3-application-structure",
+        "line": 112,
+        "start_anchor": "<!-- anchor: 3-application-structure -->",
+        "description": "3. Application Structure & User Flows"
+      },
+      {
+        "key": "3-1-route-definitions",
+        "line": 117,
+        "start_anchor": "<!-- anchor: 3-1-route-definitions -->",
+        "description": "3.1. Route Definitions"
+      },
+      {
+        "key": "3-2-critical-user-journeys",
+        "line": 126,
+        "start_anchor": "<!-- anchor: 3-2-critical-user-journeys -->",
+        "description": "3.2. Critical User Journeys (PlantUML)"
+      },
+      {
+        "key": "4-cross-cutting-concerns",
+        "line": 160,
+        "start_anchor": "<!-- anchor: 4-cross-cutting-concerns -->",
+        "description": "4. Cross-Cutting Concerns"
+      },
+      {
+        "key": "4-1-state-management",
+        "line": 165,
+        "start_anchor": "<!-- anchor: 4-1-state-management -->",
+        "description": "4.1. State Management"
+      },
+      {
+        "key": "4-2-responsive-design",
+        "line": 173,
+        "start_anchor": "<!-- anchor: 4-2-responsive-design -->",
+        "description": "4.2. Responsive Design (Mobile-First)"
+      },
+      {
+        "key": "4-3-accessibility",
+        "line": 184,
+        "start_anchor": "<!-- anchor: 4-3-accessibility -->",
+        "description": "4.3. Accessibility (WCAG 2.1 AA)"
+      },
+      {
+        "key": "4-4-performance",
+        "line": 193,
+        "start_anchor": "<!-- anchor: 4-4-performance -->",
+        "description": "4.4. Performance & Optimization"
+      },
+      {
+        "key": "4-5-backend-integration",
+        "line": 204,
+        "start_anchor": "<!-- anchor: 4-5-backend-integration -->",
+        "description": "4.5. Backend Integration"
+      },
+      {
+        "key": "5-tooling-and-dependencies",
+        "line": 212,
+        "start_anchor": "<!-- anchor: 5-tooling-and-dependencies -->",
+        "description": "5. Tooling & Dependencies"
+      },
+      {
+        "key": "5-1-core-dependencies",
+        "line": 215,
+        "start_anchor": "<!-- anchor: 5-1-core-dependencies -->",
+        "description": "5.1. Core Dependencies"
+      },
+      {
+        "key": "5-2-development-tooling",
+        "line": 225,
+        "start_anchor": "<!-- anchor: 5-2-development-tooling -->",
+        "description": "5.2. Development Tooling"
+      }
+    ]
+  }
+}

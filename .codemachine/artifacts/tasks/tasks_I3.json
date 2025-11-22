@@ -1,0 +1,108 @@
+[
+  {
+    "task_id": "I3.T1",
+    "iteration_id": "I3",
+    "iteration_goal": "Complete the feature bento grid, nav/footer links, responsiveness fallbacks, and verification/deployment assets so the landing page can ship with confidence.",
+    "description": "Implement `FeatureBentoGrid` mapping FeatureCard data to responsive layout, embed hover glows, scroll-triggered fade-up animations, and ensure mobile stack uses simplified glass cards with proper spacing.",
+    "agent_type_hint": "FrontendAgent",
+    "inputs": "FeatureCard config, Journey 2 requirements, ScrollReveal context.",
+    "target_files": [
+      "src/components/FeatureBentoGrid/index.tsx",
+      "src/components/FeatureBentoGrid/FeatureCard.tsx",
+      "src/styles/bento.css"
+    ],
+    "input_files": [
+      "src/App.tsx",
+      "src/content/features.ts",
+      "src/context/ScrollRevealProvider.tsx",
+      "src/styles/hero.css"
+    ],
+    "deliverables": "Grid component plus card subcomponent, CSS modules/Tailwind classes for inner glow + hover states, and hooks to register/unregister scroll reveals.",
+    "acceptance_criteria": "Desktop grid uses bento layout with spans from config; mobile view stacks vertically without overflow; hover states show `ring-white/10` + lighten effect; ScrollReveal triggers once per card; performance remains under 16ms per frame.",
+    "dependencies": [
+      "I2.T4"
+    ],
+    "parallelizable": false,
+    "done": true
+  },
+  {
+    "task_id": "I3.T2",
+    "iteration_id": "I3",
+    "iteration_goal": "Complete the feature bento grid, nav/footer links, responsiveness fallbacks, and verification/deployment assets so the landing page can ship with confidence.",
+    "description": "Finalize navigation/footer, docs links, GitHub placements, and responsive menu/stacking plus ensure ExternalLink config drives both nav + footer components with consistent aria labels.",
+    "agent_type_hint": "FrontendAgent",
+    "inputs": "ExternalLink config, Journey 3 requirements, Section 5.0 design cues.",
+    "target_files": [
+      "src/components/NavigationBar/NavLinks.tsx",
+      "src/components/FooterCluster/index.tsx",
+      "src/styles/navigation.css"
+    ],
+    "input_files": [
+      "src/components/NavigationBar/index.tsx",
+      "src/components/ExperienceShell/index.tsx",
+      "src/content/links.ts"
+    ],
+    "deliverables": "Sticky nav w/ doc + GitHub CTAs, mobile drawer or icon-only nav, footer cluster replicating CTA links, and consistent analytics events hooking into `trackEvent` for outbound clicks.",
+    "acceptance_criteria": "Links open in new tab, include `aria-label`, share icon/text combos per spec; mobile nav accessible with focus trap; footer contains docs + GitHub + social placeholders; nav animation smooth under 60fps.",
+    "dependencies": [
+      "I2.T4"
+    ],
+    "parallelizable": true,
+    "done": true
+  },
+  {
+    "task_id": "I3.T3",
+    "iteration_id": "I3",
+    "iteration_goal": "Complete the feature bento grid, nav/footer links, responsiveness fallbacks, and verification/deployment assets so the landing page can ship with confidence.",
+    "description": "Execute responsiveness/performance hardening: apply noise/grid/perf tweaks, add lazy-loaded mobile screenshot for simulation fallback, and write Vitest/Playwright coverage for Journey 2 + 3 flows.",
+    "agent_type_hint": "PerformanceAgent",
+    "inputs": "Section 5.0 design directives, tasks `I3.T1` + `I3.T2` outputs.",
+    "target_files": [
+      "public/mobile-sim.webp",
+      "src/styles/perf.css",
+      "tests/e2e/journey.spec.ts",
+      "tests/unit/hooks.test.ts"
+    ],
+    "input_files": [
+      "src/components/VisualSimulationWindow/index.tsx",
+      "src/styles/tokens.css",
+      "tests/e2e/*.spec.ts"
+    ],
+    "deliverables": "Optimized assets (noise, screenshot), deferred animation scripts leveraging `requestIdleCallback`, updated tests for Journey 2 + 3 (scroll reveals, docs/GitHub navigation), and documentation of performance budgets.",
+    "acceptance_criteria": "Lighthouse run meets KPI targets; Playwright covers copy -> docs -> GitHub flows; fallback screenshot loads <35KB; CSS ensures background textures never block main thread.",
+    "dependencies": [
+      "I3.T1",
+      "I3.T2"
+    ],
+    "parallelizable": false,
+    "done": true
+  },
+  {
+    "task_id": "I3.T4",
+    "iteration_id": "I3",
+    "iteration_goal": "Complete the feature bento grid, nav/footer links, responsiveness fallbacks, and verification/deployment assets so the landing page can ship with confidence.",
+    "description": "Create deployment + verification checklist (Markdown), wire GitHub Actions/Netlify/Vercel configs, and finalize README sections for deployment, env vars, and troubleshooting, ensuring manifest anchors exist.",
+    "agent_type_hint": "DevOpsAgent",
+    "inputs": "Section 2.1 (artifact commitment), Section 6 verification strategy, outputs of `I3.T3` tests.",
+    "target_files": [
+      "docs/adr/verification_checklist.md",
+      ".github/workflows/ci.yml",
+      "vercel.json",
+      "netlify.toml",
+      "README.md"
+    ],
+    "input_files": [
+      "README.md",
+      "package.json",
+      "Dockerfile",
+      "tests/e2e/journey.spec.ts"
+    ],
+    "deliverables": "Checklist describing lint/test/lighthouse/playwright gates, CI workflow running pnpm install/lint/test/build/lhci, deployment config enabling env vars, README updates referencing new docs.",
+    "acceptance_criteria": "CI workflow green locally via `act` or dry-run; checklist lists owners + cadence; README includes deployment instructions and env variable docs; manifest-ready anchors for new docs.",
+    "dependencies": [
+      "I3.T3"
+    ],
+    "parallelizable": true,
+    "done": true
+  }
+]

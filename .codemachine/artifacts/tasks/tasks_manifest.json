@@ -1,0 +1,10 @@
+{
+  "description": "Manifest of all iteration task files",
+  "total_iterations": 3,
+  "task_files": [
+    "tasks_I1.json",
+    "tasks_I2.json",
+    "tasks_I3.json"
+  ],
+  "generated_at": "auto-generated"
+}

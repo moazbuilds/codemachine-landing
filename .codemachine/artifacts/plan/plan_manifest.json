@@ -1,0 +1,148 @@
+{
+  "locations": [
+    {
+      "key": "project-plan-root",
+      "file": "01_Plan_Overview_and_Setup.md",
+      "start_anchor": "<!-- anchor: project-plan-root -->",
+      "description": "Document metadata and high-level title for the CodeMachine Landing Page plan."
+    },
+    {
+      "key": "project-overview",
+      "file": "01_Plan_Overview_and_Setup.md",
+      "start_anchor": "<!-- anchor: project-overview -->",
+      "description": "Goal, requirement summary, scale classification, and key assumptions."
+    },
+    {
+      "key": "core-architecture",
+      "file": "01_Plan_Overview_and_Setup.md",
+      "start_anchor": "<!-- anchor: core-architecture -->",
+      "description": "Architectural style, stack, components, data model, API style, and communication patterns."
+    },
+    {
+      "key": "key-architectural-artifacts",
+      "file": "01_Plan_Overview_and_Setup.md",
+      "start_anchor": "<!-- anchor: key-architectural-artifacts -->",
+      "description": "List of planned diagrams/specifications with formats and iteration ownership."
+    },
+    {
+      "key": "directory-structure",
+      "file": "01_Plan_Overview_and_Setup.md",
+      "start_anchor": "<!-- anchor: directory-structure -->",
+      "description": "Proposed project tree covering src, docs, tests, api, and tooling files."
+    },
+    {
+      "key": "directives-strict-process",
+      "file": "01_Plan_Overview_and_Setup.md",
+      "start_anchor": "<!-- anchor: directives-strict-process -->",
+      "description": "Command, write, validation, scope, and traceability rules for all agents."
+    },
+    {
+      "key": "iteration-plan-overview",
+      "file": "02_Iteration_I1.md",
+      "start_anchor": "<!-- anchor: iteration-plan-overview -->",
+      "description": "Section 5 summary covering total iterations, dependencies, and coordination notes."
+    },
+    {
+      "key": "iteration-1-plan",
+      "file": "02_Iteration_I1.md",
+      "start_anchor": "<!-- anchor: iteration-1-plan -->",
+      "description": "Iteration 1 goal, prerequisites, KPIs, and exit criteria."
+    },
+    {
+      "key": "task-i1-t1",
+      "file": "02_Iteration_I1.md",
+      "start_anchor": "<!-- anchor: task-i1-t1 -->",
+      "description": "Task I1.T1 scaffolds Vite + Tailwind workspace and Docker parity."
+    },
+    {
+      "key": "task-i1-t2",
+      "file": "02_Iteration_I1.md",
+      "start_anchor": "<!-- anchor: task-i1-t2 -->",
+      "description": "Task I1.T2 creates typed content modules and the data model ERD."
+    },
+    {
+      "key": "task-i1-t3",
+      "file": "02_Iteration_I1.md",
+      "start_anchor": "<!-- anchor: task-i1-t3 -->",
+      "description": "Task I1.T3 builds ExperienceShell layout and providers."
+    },
+    {
+      "key": "task-i1-t4",
+      "file": "02_Iteration_I1.md",
+      "start_anchor": "<!-- anchor: task-i1-t4 -->",
+      "description": "Task I1.T4 writes README onboarding and component diagram."
+    },
+    {
+      "key": "iteration-2-plan",
+      "file": "02_Iteration_I2.md",
+      "start_anchor": "<!-- anchor: iteration-2-plan -->",
+      "description": "Iteration 2 summary plus hero, simulation, and GitHub integration context."
+    },
+    {
+      "key": "task-i2-t1",
+      "file": "02_Iteration_I2.md",
+      "start_anchor": "<!-- anchor: task-i2-t1 -->",
+      "description": "Task I2.T1 implements HeroCommandPanel, copy CTA, and docs button."
+    },
+    {
+      "key": "task-i2-t2",
+      "file": "02_Iteration_I2.md",
+      "start_anchor": "<!-- anchor: task-i2-t2 -->",
+      "description": "Task I2.T2 builds VisualSimulationWindow and Journey 1 sequence diagram."
+    },
+    {
+      "key": "task-i2-t3",
+      "file": "02_Iteration_I2.md",
+      "start_anchor": "<!-- anchor: task-i2-t3 -->",
+      "description": "Task I2.T3 creates IntegrationStatusBar, GitHub hook, and API spec."
+    },
+    {
+      "key": "task-i2-t4",
+      "file": "02_Iteration_I2.md",
+      "start_anchor": "<!-- anchor: task-i2-t4 -->",
+      "description": "Task I2.T4 handles ScrollReveal, analytics helper, and README troubleshooting updates."
+    },
+    {
+      "key": "iteration-3-plan",
+      "file": "02_Iteration_I3.md",
+      "start_anchor": "<!-- anchor: iteration-3-plan -->",
+      "description": "Iteration 3 overview focused on feature grid, responsive polish, and release prep."
+    },
+    {
+      "key": "task-i3-t1",
+      "file": "02_Iteration_I3.md",
+      "start_anchor": "<!-- anchor: task-i3-t1 -->",
+      "description": "Task I3.T1 builds FeatureBentoGrid with hover glows and scroll reveals."
+    },
+    {
+      "key": "task-i3-t2",
+      "file": "02_Iteration_I3.md",
+      "start_anchor": "<!-- anchor: task-i3-t2 -->",
+      "description": "Task I3.T2 finalizes navigation/footer and link analytics."
+    },
+    {
+      "key": "task-i3-t3",
+      "file": "02_Iteration_I3.md",
+      "start_anchor": "<!-- anchor: task-i3-t3 -->",
+      "description": "Task I3.T3 applies performance hardening and journey tests."
+    },
+    {
+      "key": "task-i3-t4",
+      "file": "02_Iteration_I3.md",
+      "start_anchor": "<!-- anchor: task-i3-t4 -->",
+      "description": "Task I3.T4 authors verification checklist and CI/deployment configs."
+    },
+    {
+      "key": "verification-and-integration-strategy",
+      "file": "03_Verification_and_Glossary.md",
+      "start_anchor": "<!-- anchor: verification-and-integration-strategy -->",
+      "description": "Testing matrix, CI/CD flow, quality gates, artifacts, cadence, and incident response."
+    },
+    {
+      "key": "glossary",
+      "file": "03_Verification_and_Glossary.md",
+      "start_anchor": "<!-- anchor: glossary -->",
+      "description": "Definitions for Aura Theme, ExperienceShell, HeroCommandPanel, FeatureBentoGrid, and other key terms."
+    }
+  ]
+}
