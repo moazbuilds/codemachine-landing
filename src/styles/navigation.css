@@ -1,0 +1,189 @@
+/**
+ * Navigation Styles
+ * Task: I3.T2 - Responsive animations and mobile drawer transitions
+ *
+ * Provides:
+ * - Mobile drawer slide-in animations (GPU-accelerated with transform)
+ * - Backdrop fade transitions
+ * - Smooth 60fps animations using transform/opacity
+ * - prefers-reduced-motion support (opacity-only transitions)
+ * - Focus ring styles for accessibility
+ *
+ * Design System: Aura
+ * Performance Target: 60fps on mobile devices
+ */
+
+/* ===================================================================
+   Mobile Drawer Backdrop Animation
+   =================================================================== */
+
+.mobile-drawer-backdrop {
+  animation: backdrop-fade-in 0.2s ease-out forwards;
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ===================================================================
+   Mobile Drawer Panel Slide Animation
+   =================================================================== */
+
+.mobile-drawer-panel {
+  animation: drawer-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes drawer-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ===================================================================
+   Reduced Motion Support
+   =================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-drawer-backdrop {
+    animation: backdrop-fade-in-reduced 0.15s ease-out forwards;
+  }
+
+  .mobile-drawer-panel {
+    animation: drawer-fade-in-reduced 0.15s ease-out forwards;
+  }
+
+  @keyframes backdrop-fade-in-reduced {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes drawer-fade-in-reduced {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Disable all transform-based animations */
+  .mobile-drawer-panel {
+    transform: none !important;
+  }
+}
+
+/* ===================================================================
+   Focus Ring Utilities
+   =================================================================== */
+
+/*
+ * Aura focus ring - applied via .focus-ring-aura class
+ * Matches design system tokens:
+ * - ring-2: 2px ring width
+ * - ring-primary-500/60: indigo with 60% opacity
+ * - ring-offset-2: 2px offset from element
+ * - ring-offset-neutral-950: offset color matches dark background
+ */
+.focus-ring-aura:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px #020202,
+    0 0 0 4px rgba(139, 92, 246, 0.6);
+}
+
+/* Ensure focus styles respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .focus-ring-aura:focus-visible {
+    transition: none !important;
+  }
+}
+
+/* ===================================================================
+   Sticky Navigation Performance Optimization
+   =================================================================== */
+
+/*
+ * Use will-change sparingly to hint GPU acceleration
+ * Only apply to elements that will animate (drawer, backdrop)
+ */
+.mobile-drawer-backdrop,
+.mobile-drawer-panel {
+  will-change: transform, opacity;
+}
+
+/* Remove will-change after animation completes to free GPU memory */
+@media (min-width: 768px) {
+  .mobile-drawer-backdrop,
+  .mobile-drawer-panel {
+    will-change: auto;
+  }
+}
+
+/* ===================================================================
+   Glass Surface Effects for Nav/Footer
+   =================================================================== */
+
+/*
+ * Glass surface utility - already defined in global styles
+ * but scoped here for nav-specific overrides if needed
+ */
+.glass-surface {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Enhanced glass effect for mobile drawer */
+.mobile-drawer-panel.glass-surface {
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* ===================================================================
+   Smooth Scroll Behavior (Global)
+   =================================================================== */
+
+/*
+ * Enable smooth scrolling for anchor links
+ * Respects prefers-reduced-motion
+ */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ===================================================================
+   Touch Target Sizing (Mobile Accessibility)
+   =================================================================== */
+
+/*
+ * Ensure all interactive elements in mobile nav meet 48px minimum
+ * This is handled in component classes but documented here
+ */
+@media (max-width: 767px) {
+  .mobile-drawer-panel a,
+  .mobile-drawer-panel button {
+    min-height: 48px;
+    min-width: 48px;
+  }
+}

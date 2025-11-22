@@ -16,6 +16,7 @@ export { featureFlags, isFeatureEnabled } from './flags'
 // Re-export all types
 export type {
   ExternalLink,
+  ExternalLinkLocation,
   FeatureCard,
   FeatureFlag,
   HeroContent,

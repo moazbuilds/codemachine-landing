@@ -1,4 +1,8 @@
+import type { EventName } from '@/lib/analytics'
+
 export type IconKey = 'sparkles' | 'zap' | 'terminal'
+
+export type ExternalLinkLocation = 'nav' | 'footer' | 'both'
 
 export type FeatureCard = {
   id: string
@@ -33,6 +37,11 @@ export type ExternalLink = {
   label: string
   href: string
   description?: string
+  icon?: string // Lucide icon name
+  ariaLabel?: string
+  location: ExternalLinkLocation[]
+  newTab: boolean
+  analyticsEventName?: EventName
 }
 
 export type StarMetric = {

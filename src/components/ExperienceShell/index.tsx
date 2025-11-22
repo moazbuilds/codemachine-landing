@@ -21,9 +21,11 @@
 
 import type { ReactNode } from 'react'
 import { NavigationBar } from '@/components/NavigationBar'
+import { FooterCluster } from '@/components/FooterCluster'
 import { BackgroundLayers } from './BackgroundLayers'
 import { ScrollRevealProvider } from './ScrollRevealContext'
 import { FeatureFlagProvider } from './FeatureFlagContext'
+import '@/styles/navigation.css'
 
 interface ExperienceShellProps {
   children: ReactNode
@@ -33,7 +35,7 @@ export function ExperienceShell({ children }: ExperienceShellProps) {
   return (
     <FeatureFlagProvider>
       <ScrollRevealProvider>
-        <div className="relative min-h-screen overflow-hidden noise-texture">
+        <div className="relative min-h-screen overflow-hidden noise-texture flex flex-col">
           {/* Background decorative layers (glows, gradients) */}
           <BackgroundLayers />
 
@@ -42,7 +44,7 @@ export function ExperienceShell({ children }: ExperienceShellProps) {
 
           {/* Main content area with responsive padding */}
           <main
-            className="relative"
+            className="relative flex-1"
             style={{
               zIndex: 'var(--z-content)',
               paddingLeft: 'var(--shell-padding-x)',
@@ -72,6 +74,9 @@ export function ExperienceShell({ children }: ExperienceShellProps) {
               - <section id="integrations" aria-label="Integration status">
             */}
           </main>
+
+          {/* Footer with external links and brand signature */}
+          <FooterCluster />
         </div>
       </ScrollRevealProvider>
     </FeatureFlagProvider>

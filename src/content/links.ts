@@ -4,19 +4,39 @@
 import type { ExternalLink, StarMetric } from './types'
 
 /**
- * External links displayed in the footer or navigation.
- * Each link includes a label, href, and optional description.
+ * External links displayed in navigation and/or footer.
+ * Each link includes label, href, icon, location filtering, and accessibility metadata.
  */
 export const externalLinks: readonly ExternalLink[] = [
   {
-    label: 'GitHub Repo',
-    href: 'https://github.com/moazbuilds/CodeMachine-CLI',
-    description: 'Source of truth for the CodeMachine CLI and docs.',
+    label: 'Documentation',
+    href: 'http://docs.codemachine.co/',
+    description: 'Official CodeMachine documentation and guides.',
+    icon: 'Book',
+    ariaLabel: 'Read documentation (opens in new tab)',
+    location: ['both'],
+    newTab: true,
+    analyticsEventName: 'hero_docs_click',
   },
   {
-    label: 'Design Spec',
-    href: '/docs/diagrams/component.md',
-    description: 'Planned component diagram for the ExperienceShell.',
+    label: 'GitHub',
+    href: 'https://github.com/moazbuilds/CodeMachine-CLI',
+    description: 'Source code and issue tracker for CodeMachine CLI.',
+    icon: 'Github',
+    ariaLabel: 'View source on GitHub (opens in new tab)',
+    location: ['both'],
+    newTab: true,
+    analyticsEventName: 'github_star_click',
+  },
+  {
+    label: 'Twitter',
+    href: 'https://twitter.com/codemachine',
+    description: 'Follow CodeMachine updates on Twitter.',
+    icon: 'Twitter',
+    ariaLabel: 'Follow us on Twitter (opens in new tab)',
+    location: ['footer'],
+    newTab: true,
+    analyticsEventName: 'social_link_click',
   },
 ] as const
 
