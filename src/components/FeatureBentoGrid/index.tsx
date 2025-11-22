@@ -30,7 +30,7 @@ export function FeatureBentoGrid() {
     <section
       id="features"
       aria-labelledby="features-heading"
-      className="mx-auto max-w-7xl px-6 py-16 md:py-24"
+      className="mx-auto max-w-7xl px-6 py-16 md:py-24 content-visibility-bento"
     >
       {/* Section heading */}
       <div className="mb-12 flex flex-col gap-4">
@@ -45,26 +45,33 @@ export function FeatureBentoGrid() {
         </p>
       </div>
 
-      {/* Bento grid layout */}
-      <div
-        className="
-          bento-grid
-          grid
-          grid-cols-1
-          gap-4
-          md:grid-cols-2
-          lg:grid-cols-3
-          lg:gap-6
-        "
-        role="list"
-      >
-        {featureCards.map((card, index) => (
-          <FeatureCard
-            key={card.id}
-            card={card}
-            index={index}
-          />
-        ))}
+      {/* Bento grid layout with isolated grid background */}
+      <div className="relative overflow-hidden rounded-3xl border border-white/5 bg-neutral-950/40 p-6">
+        <div
+          aria-hidden="true"
+          className="bg-grid-pattern absolute inset-0 opacity-40"
+        />
+        <div
+          className="
+            bento-grid
+            relative
+            grid
+            grid-cols-1
+            gap-4
+            md:grid-cols-2
+            lg:grid-cols-3
+            lg:gap-6
+          "
+          role="list"
+        >
+          {featureCards.map((card, index) => (
+            <FeatureCard
+              key={card.id}
+              card={card}
+              index={index}
+            />
+          ))}
+        </div>
       </div>
     </section>
   )

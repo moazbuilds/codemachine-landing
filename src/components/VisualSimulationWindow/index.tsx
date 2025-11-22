@@ -1,6 +1,7 @@
 /**
  * VisualSimulationWindow Component
  * Referenced by: src/App.tsx
+ * Task: I3.T3 - Enhanced with mobile fallback and lazy loading
  *
  * Desktop variant of the simulation window showing terminal panes, telemetry,
  * and animation tokens with glassmorphic styling and scroll-based reveal effects.
@@ -11,9 +12,11 @@
  * - Multi-pane terminal simulation UI
  * - Respects prefers-reduced-motion
  * - Props-driven for reusability
+ * - Mobile fallback screenshot (<35KB WebP) with lazy loading
+ * - Deferred animations via requestIdleCallback
  */
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useCallback } from 'react'
 import { useScrollReveal } from '@/hooks/useScrollReveal'
 import { useScrollRevealContext } from '@/context/ScrollRevealProvider'
 import { Terminal, Activity, Cpu } from 'lucide-react'
@@ -136,19 +139,52 @@ export function VisualSimulationWindow({
   const isVisible = useScrollReveal(containerRef)
   const { reducedMotion } = useScrollRevealContext()
   const revealActive = reducedMotion || isVisible
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const [idleAnimationsReady, setIdleAnimationsReady] = useState(false)
+  const handleImageLoad = useCallback(() => {
+    setImageLoaded((prev) => {
+      if (!prev) {
+        trackEvent('simulation_play', { surface: 'mobile_fallback' })
+      }
+      return true
+    })
+  }, [])
 
+  // Track analytics when visible
   useEffect(() => {
     if (isVisible) {
       trackEvent('simulation_play', { surface: 'desktop' })
     }
   }, [isVisible])
 
+  // Defer heavy animations until main thread is idle
+  useEffect(() => {
+    if (!isVisible || reducedMotion) return
+
+    // Use requestIdleCallback with setTimeout fallback for Safari
+    if (typeof window !== 'undefined') {
+      const deferAnimations = () => {
+        setIdleAnimationsReady(true)
+      }
+
+      if ('requestIdleCallback' in window) {
+        const idleCallbackId = window.requestIdleCallback(deferAnimations, {
+          timeout: 2000,
+        })
+        return () => window.cancelIdleCallback(idleCallbackId)
+      } else {
+        const timeoutId = window.setTimeout(deferAnimations, 100)
+        return () => window.clearTimeout(timeoutId)
+      }
+    }
+  }, [isVisible, reducedMotion])
+
   return (
     <section
       ref={containerRef}
       id="simulation"
       aria-label="Live simulation window"
-      className={`relative mx-auto max-w-6xl py-16 ${className}`}
+      className={`relative mx-auto max-w-6xl py-16 content-visibility-auto ${className}`}
     >
       {/* Section Header */}
       <div className="mb-8 text-center">
@@ -161,6 +197,29 @@ export function VisualSimulationWindow({
           in real-time as you interact with the hero command panel above.
         </p>
       </div>
+
+      {/* Mobile Fallback Screenshot (hidden on desktop) */}
+      <picture
+        className={`md:hidden block mb-4 transition-opacity duration-300 ${
+          imageLoaded ? 'opacity-100 lazy-loaded' : 'opacity-0'
+        }`}
+        aria-hidden={imageLoaded ? undefined : 'true'}
+      >
+        <source type="image/webp" srcSet="/mobile-sim.webp" />
+        <img
+          src="/mobile-sim.jpg"
+          alt="CodeMachine simulation window showing installation, telemetry, and performance metrics"
+          loading="lazy"
+          decoding="async"
+          width="750"
+          height="563"
+          sizes="(max-width: 768px) 100vw, 750px"
+          fetchPriority="low"
+          onLoad={handleImageLoad}
+          className="w-full rounded-2xl lazy-placeholder lazy-img-4-3 will-change-opacity"
+          style={{ aspectRatio: '4/3' }}
+        />
+      </picture>
 
       {/* Desktop Simulation Window */}
       <div
@@ -199,7 +258,11 @@ export function VisualSimulationWindow({
               return (
                 <div
                   key={pane.id}
-                  className={`glass-surface rounded-lg p-4 border ${accentClass} ${glowClass} transition-all duration-500`}
+                  className={`glass-surface rounded-lg p-4 border ${accentClass} ${glowClass} transition-all duration-500 ${
+                    idleAnimationsReady && !reducedMotion
+                      ? 'will-change-transform'
+                      : ''
+                  }`}
                   style={
                     reducedMotion
                       ? {

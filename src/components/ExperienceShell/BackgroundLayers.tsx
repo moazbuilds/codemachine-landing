@@ -7,7 +7,8 @@
  * - Ambient glows positioned at different corners
  * - Base gradient background
  *
- * Uses utilities from src/index.css (.noise-texture, .ambient-glow)
+ * Uses utilities from src/index.css (.ambient-glow) combined with
+ * CSS noise overlay from src/styles/perf.css.
  * and design tokens from src/styles/tokens.css
  */
 

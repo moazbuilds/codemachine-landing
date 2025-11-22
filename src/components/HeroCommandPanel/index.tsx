@@ -93,7 +93,7 @@ export function HeroCommandPanel() {
       aria-label="Hero command panel"
       className={cn(
         'hero-section',
-        'relative mx-auto max-w-4xl',
+        'relative mx-auto max-w-4xl content-visibility-hero',
         'px-6 py-16 md:py-24 lg:py-32',
         heroVisible && 'is-visible'
       )}

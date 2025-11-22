@@ -97,7 +97,7 @@ export function MobileCard({
       ref={containerRef}
       id="simulation-mobile"
       aria-label="Simulation preview"
-      className={`md:hidden mx-auto max-w-xl py-12 px-4 ${className}`}
+      className={`md:hidden mx-auto max-w-xl py-12 px-4 content-visibility-auto ${className}`}
     >
       {/* Section Header */}
       <div className="mb-6 text-center">

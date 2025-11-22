@@ -1,6 +1,9 @@
 /* Import ExperienceShell design tokens */
 @import './styles/tokens.css';
 
+/* Import Performance optimization layer */
+@import './styles/perf.css';
+
 /* Tailwind Directives */
 @tailwind base;
 @tailwind components;

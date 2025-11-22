@@ -35,7 +35,16 @@ export function ExperienceShell({ children }: ExperienceShellProps) {
   return (
     <FeatureFlagProvider>
       <ScrollRevealProvider>
-        <div className="relative min-h-screen overflow-hidden noise-texture flex flex-col">
+        <div className="relative min-h-screen overflow-hidden flex flex-col">
+          {/* CSS-only noise overlay using contain: paint to avoid reflow */}
+          <div
+            aria-hidden="true"
+            className="bg-noise-pattern absolute inset-0"
+            style={{
+              opacity: 'var(--noise-opacity, 0.04)',
+              zIndex: 'var(--z-background)',
+            }}
+          />
           {/* Background decorative layers (glows, gradients) */}
           <BackgroundLayers />
 

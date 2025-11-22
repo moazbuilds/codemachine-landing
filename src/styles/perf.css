@@ -1,0 +1,342 @@
+/**
+ * Performance Optimization CSS Layer
+ * Task: I3.T3 - Responsiveness & Performance Hardening
+ *
+ * Provides CSS utilities for deferred animations, background texture optimizations,
+ * and main-thread protection following performance budgets:
+ * - Sub-200KB gzipped JS
+ * - LCP < 2.5s
+ * - CLS < 0.05
+ * - TTI < 3.0s
+ *
+ * Referenced by: src/index.css (imported once for global scope)
+ */
+
+/* ============================================================================
+   IDLE DEFERRAL UTILITIES
+   ============================================================================
+   Apply these classes to elements with non-critical animations that can be
+   deferred until the main thread is idle. Uses will-change hints to optimize
+   compositor layers.
+   ========================================================================= */
+
+/**
+ * .idle-deferred
+ * Delays animation start to allow critical rendering to complete first.
+ * Removes will-change after animation completes to free GPU memory.
+ */
+.idle-deferred {
+  animation-play-state: paused;
+}
+
+@supports (animation-timeline: scroll()) {
+  /* Modern browsers: use animation-timeline for scroll-linked effects */
+  .idle-deferred-scroll {
+    animation-timeline: scroll();
+    animation-range: entry 0% cover 30%;
+  }
+}
+
+/**
+ * Activate deferred animations after initial render
+ * Applied via JS requestIdleCallback or setTimeout fallback
+ */
+.idle-active {
+  animation-play-state: running;
+}
+
+/**
+ * Optimize compositing for transform/opacity animations
+ * Only use during active animations, remove after completion
+ */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/**
+ * Remove will-change after animation completes to prevent memory leaks
+ */
+.will-change-auto {
+  will-change: auto;
+}
+
+/* ============================================================================
+   CONTENT VISIBILITY OPTIMIZATIONS
+   ============================================================================
+   Apply contain-intrinsic-size to off-screen sections to enable
+   content-visibility: auto without layout shifts.
+   ========================================================================= */
+
+/**
+ * Apply to sections that are initially off-screen (below fold)
+ * Browser skips rendering until scrolled into view
+ */
+.content-visibility-auto {
+  content-visibility: auto;
+  /* Reserve approximate height to prevent CLS */
+  contain-intrinsic-size: auto 500px;
+}
+
+/**
+ * For known-height sections (e.g., hero, bento grid)
+ * More precise intrinsic size prevents layout shift
+ */
+.content-visibility-hero {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 100vh;
+}
+
+.content-visibility-bento {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 800px;
+}
+
+/* ============================================================================
+   BACKGROUND TEXTURE OPTIMIZATIONS
+   ============================================================================
+   CSS-only noise/grid patterns to replace image assets.
+   Uses contain: paint to isolate paint operations from main thread.
+   ========================================================================= */
+
+/**
+ * Lightweight CSS noise pattern
+ * Replaces image-based noise textures with pure CSS
+ */
+.bg-noise-pattern {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.03) 2px,
+      rgba(255, 255, 255, 0.03) 4px
+    );
+  contain: paint;
+  pointer-events: none;
+}
+
+/**
+ * Optimized gradient glow backgrounds
+ * Uses contain: paint to prevent repaints from affecting layout
+ */
+.bg-glow-isolated {
+  background: radial-gradient(
+    circle at center,
+    var(--shell-glow-primary, rgba(139, 92, 246, 0.2)),
+    transparent 60%
+  );
+  contain: paint;
+  pointer-events: none;
+}
+
+/**
+ * Grid pattern for bento/card backgrounds
+ */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  contain: paint;
+}
+
+/* ============================================================================
+   REDUCED MOTION OVERRIDES
+   ============================================================================
+   Ensure all animations gracefully degrade to opacity-only transitions
+   when user has prefers-reduced-motion enabled (WCAG 2.1 AA compliance).
+   ========================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Disable all transform-based animations */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep opacity transitions but reduce duration */
+  .transition-opacity {
+    transition-duration: 150ms !important;
+  }
+
+  /* Remove perspective transforms */
+  .perspective-none-reduced {
+    transform: none !important;
+    perspective: none !important;
+  }
+
+  /* Disable will-change to save GPU resources */
+  .will-change-transform,
+  .will-change-opacity {
+    will-change: auto !important;
+  }
+
+  /* Disable deferred animations entirely */
+  .idle-deferred,
+  .idle-active {
+    animation: none !important;
+  }
+}
+
+/* ============================================================================
+   LAZY LOADING HELPERS
+   ============================================================================
+   Utilities for images and iframes with loading="lazy" to prevent CLS.
+   ========================================================================= */
+
+/**
+ * Reserve space for lazy-loaded images with aspect ratio
+ * Prevents Cumulative Layout Shift (CLS)
+ */
+.lazy-img-16-9 {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.lazy-img-4-3 {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.lazy-img-1-1 {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+/**
+ * Placeholder background during image load
+ * Matches shell background gradient
+ */
+.lazy-placeholder {
+  background: linear-gradient(
+    135deg,
+    var(--shell-bg-gradient-start, #020202),
+    var(--shell-bg-gradient-end, #050505)
+  );
+}
+
+/**
+ * Fade-in effect after image loads
+ * Apply via onLoad handler in React
+ */
+.lazy-loaded {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================================================
+   MOBILE PERFORMANCE OPTIMIZATIONS
+   ============================================================================
+   Mobile-specific optimizations to reduce paint complexity and improve
+   scrolling performance on lower-end devices.
+   ========================================================================= */
+
+@media (max-width: 767px) {
+  /**
+   * Simplify box shadows on mobile to reduce paint overhead
+   */
+  .glass-surface {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /**
+   * Reduce blur radius on mobile for better performance
+   */
+  .blur-3xl {
+    filter: blur(40px) !important;
+  }
+
+  /**
+   * Disable parallax effects on mobile
+   */
+  .parallax-disabled-mobile {
+    transform: none !important;
+  }
+
+  /**
+   * Simplify gradients on mobile (fewer color stops)
+   */
+  .gradient-simplified-mobile {
+    background: linear-gradient(
+      135deg,
+      var(--shell-glow-primary, rgba(139, 92, 246, 0.2)),
+      transparent
+    ) !important;
+  }
+}
+
+/* ============================================================================
+   PRINT OPTIMIZATIONS
+   ============================================================================
+   Hide decorative elements and animations in print mode.
+   ========================================================================= */
+
+@media print {
+  /* Hide all decorative glows, noise, and animations */
+  .bg-noise-pattern,
+  .bg-glow-isolated,
+  .bg-grid-pattern,
+  [class*="glow"],
+  [class*="blur"],
+  .idle-deferred,
+  .idle-active {
+    display: none !important;
+  }
+
+  /* Simplify backgrounds to save ink */
+  .glass-surface {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+}
+
+/* ============================================================================
+   DEBUG UTILITIES (Remove in production)
+   ============================================================================
+   Visual indicators for performance debugging during development.
+   ========================================================================= */
+
+/**
+ * Highlight elements using content-visibility
+ * Remove before production deploy
+ */
+/*
+.content-visibility-auto::before,
+.content-visibility-hero::before,
+.content-visibility-bento::before {
+  content: "🔍 content-visibility active";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 0, 0, 0.2);
+  color: white;
+  font-size: 10px;
+  padding: 2px 4px;
+  z-index: 9999;
+  pointer-events: none;
+}
+*/

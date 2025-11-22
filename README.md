@@ -87,6 +87,15 @@ pnpm run preview      # Preview production build locally
 # Code Quality
 pnpm run lint         # Run ESLint
 pnpm run format       # Format code with Prettier
+
+# Testing
+pnpm run test:unit    # Vitest hooks + utility specs
+pnpm run test:e2e     # Playwright journeys (headless)
+pnpm run test:e2e:ui  # Playwright UI runner for debugging
+
+# Performance
+pnpm run test:perf    # Lighthouse CI budgets
+pnpm run analyze      # Bundle analyzer (Vite visualizer)
 ```
 
 <!-- anchor: core-architecture -->
