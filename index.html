@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="CodeMachine - Autonomous AI agents for your codebase. Experience the future of development with intelligent, context-aware automation." />
+
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="CodeMachine - Autonomous AI Agents for Code" />
+    <meta property="og:description" content="Experience the future of development with intelligent, context-aware automation." />
+    <meta property="og:site_name" content="CodeMachine" />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CodeMachine - Autonomous AI Agents for Code" />
+    <meta name="twitter:description" content="Experience the future of development with intelligent, context-aware automation." />
+
+    <!-- Preconnect to Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Load Inter and JetBrains Mono Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon (placeholder - add actual favicon later) -->
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <title>CodeMachine - Autonomous AI Agents for Code</title>
+
+    <style>
+      /* Inline critical CSS for initial paint */
+      html {
+        background: linear-gradient(to bottom, #020202, #050505);
+        min-height: 100vh;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Noise overlay applied globally */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/textures/noise.svg');
+        opacity: 0.03;
+        pointer-events: none;
+        z-index: 1;
+      }
+
+      #root {
+        position: relative;
+        z-index: 2;
+      }
+
+      /* Loading state */
+      .loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        color: #a78bfa;
+        font-family: 'JetBrains Mono', monospace;
+      }
+    </style>
+
+    <script>
+      // Initialize theme on page load (prevent flash)
+      (function() {
+        const theme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <div class="loading">
+        <span>Initializing CodeMachine...</span>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

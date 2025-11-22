@@ -1,0 +1,50 @@
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules
+.pnpm-store
+
+# Build outputs
+dist
+build
+.vite
+
+# Cache and temporary files
+*.cache
+.cache
+__pycache__
+*.log
+*.tmp
+*.swp
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE and editor files
+.vscode
+.idea
+*.sublime-*
+.DS_Store
+
+# CodeMachine artifacts
+.codemachine
+
+# Documentation (not needed in production)
+docs
+*.md
+!README.md
+
+# Test files
+tests
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# CI/CD
+.github
+.gitlab-ci.yml

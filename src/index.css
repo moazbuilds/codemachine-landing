@@ -1,0 +1,175 @@
+/* Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties for Aura Theme */
+:root {
+  --noise-opacity: 0.03;
+  --noise-url: url('/textures/noise.svg');
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --bg-base-start: #020202;
+  --bg-base-end: #050505;
+}
+
+/* Base Layer Customizations */
+@layer base {
+  html {
+    @apply antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    font-variation-settings: 'opsz' 32;
+  }
+
+  body {
+    @apply bg-neutral-950 text-white;
+    background: linear-gradient(
+      to bottom,
+      var(--bg-base-start),
+      var(--bg-base-end)
+    );
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      sans-serif;
+    min-height: 100vh;
+  }
+
+  /* Monospace font for code elements */
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, 'Liberation Mono', 'Courier New', monospace;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar styling for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-950;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-500;
+  }
+
+  /* Selection color */
+  ::selection {
+    @apply bg-primary-500/30 text-primary-400;
+  }
+}
+
+/* Component Layer Utilities */
+@layer components {
+  /* Ambient glow utility for background decorations */
+  .ambient-glow {
+    @apply absolute rounded-full blur-[120px] pointer-events-none;
+    mix-blend-mode: screen;
+  }
+
+  /* Glass morphism card base */
+  .glass-surface {
+    @apply bg-neutral-900/60 backdrop-blur-xl border border-white/10;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  /* Focus ring for accessibility */
+  .focus-ring-aura {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-950;
+  }
+
+  /* Typography utilities */
+  .heading-hero {
+    @apply text-5xl md:text-6xl lg:text-7xl font-light tracking-tighter;
+    line-height: 1.1;
+  }
+
+  .heading-section {
+    @apply text-3xl md:text-4xl font-light tracking-tight;
+    line-height: 1.1;
+  }
+
+  .body-long {
+    @apply text-base leading-relaxed;
+    line-height: 1.6;
+  }
+
+  .label-telemetry {
+    @apply text-xs uppercase tracking-[0.2em] font-mono;
+  }
+
+  /* Button base styles */
+  .btn-primary {
+    @apply px-6 py-3 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white font-medium;
+    @apply hover:from-primary-400 hover:to-primary-500 transition-all duration-200;
+    @apply focus-ring-aura;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-lg border border-white/10 text-white font-medium;
+    @apply hover:bg-white/5 hover:border-white/20 transition-all duration-200;
+    @apply focus-ring-aura;
+  }
+}
+
+/* Utility Layer Extensions */
+@layer utilities {
+  /* Noise texture overlay utility */
+  .noise-texture {
+    position: relative;
+  }
+
+  .noise-texture::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--noise-url);
+    opacity: var(--noise-opacity);
+    pointer-events: none;
+  }
+
+  /* Text gradient utility */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary-400 to-blue-500 bg-clip-text text-transparent;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);
+  }
+
+  .glow-text-primary {
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+  }
+
+  /* Grid background utility */
+  .grid-background {
+    background-image: linear-gradient(
+        to right,
+        rgba(64, 64, 64, 0.1) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, rgba(64, 64, 64, 0.1) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* Animation utilities */
+  .animate-on-scroll {
+    @apply opacity-0 translate-y-5 transition-all duration-500;
+  }
+
+  .animate-on-scroll.visible {
+    @apply opacity-100 translate-y-0;
+  }
+}

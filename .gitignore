@@ -1,12 +1,43 @@
+# CodeMachine artifacts
 .codemachine/logs
 .codemachine/memory
 .codemachine/prompts
 .codemachine/agents
 .codemachine/template.json
+
+# Dependencies
 node_modules
+.pnpm-store
+pnpm-debug.log*
+
+# Build outputs
+dist
+dist-ssr
+build
+.vite
+
+# Cache and temporary files
 *cache/
 *.cache
 __pycache__/
 *.log
 *.tmp
 *.swp
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
+
+# IDE and editor files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
