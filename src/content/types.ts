@@ -6,6 +6,12 @@ export type FeatureCard = {
   description: string
   icon: IconKey
   accent: 'primary' | 'emerald'
+  gridSpan?: {
+    desktop?: string
+    mobile?: string
+  }
+  accentGlow?: boolean
+  ctaLabel?: string
 }
 
 export type HeroContent = {

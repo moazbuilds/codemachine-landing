@@ -15,6 +15,11 @@ export const featureCards: readonly FeatureCard[] = [
       'Dark palette with glass surfaces, ambient glows, and accessible focus states baked into Tailwind utilities.',
     icon: 'sparkles',
     accent: 'primary',
+    accentGlow: true,
+    gridSpan: {
+      desktop: 'lg:col-span-2',
+      mobile: 'col-span-1',
+    },
   },
   {
     id: 'lucide-icons',
@@ -22,6 +27,11 @@ export const featureCards: readonly FeatureCard[] = [
     description: 'Tree-shakeable icon system ready for telemetry badges and command palettes.',
     icon: 'zap',
     accent: 'emerald',
+    accentGlow: true,
+    gridSpan: {
+      desktop: 'lg:col-span-1',
+      mobile: 'col-span-1',
+    },
   },
 ] as const
 

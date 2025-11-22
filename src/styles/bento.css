@@ -1,0 +1,302 @@
+/**
+ * Bento Grid Styles
+ * Task: I3.T1 - FeatureBentoGrid Implementation
+ *
+ * Provides animations, transitions, and responsive overrides for FeatureBentoGrid.
+ * Includes IntersectionObserver fade-in, hover glows, and reduced-motion support.
+ *
+ * Accessibility:
+ * - Respects prefers-reduced-motion
+ * - Maintains focus-visible states
+ * - Touch device hover fallbacks
+ * - Sufficient color contrast
+ *
+ * Performance:
+ * - CSS-only animations for GPU acceleration
+ * - will-change hints for transform/opacity
+ * - Debounced transitions (<16ms per frame)
+ */
+
+/* ============================================
+   Feature Card Animation
+   ============================================ */
+
+/**
+ * Initial state: hidden and slightly translated down
+ * IntersectionObserver adds .is-visible class to trigger animation
+ */
+.feature-card {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 300ms ease,
+    box-shadow 300ms ease;
+  will-change: opacity, transform;
+}
+
+/**
+ * Visible state: full opacity and original position
+ */
+.feature-card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/**
+ * Remove will-change after animation completes to save resources
+ */
+.feature-card.is-visible {
+  animation: removeWillChange 0.6s forwards;
+}
+
+@keyframes removeWillChange {
+  to {
+    will-change: auto;
+  }
+}
+
+/* ============================================
+   Hover States & Interactive Effects
+   ============================================ */
+
+/**
+ * Enhanced hover state for devices with hover capability
+ * Applies subtle lift and glow effects
+ */
+@media (hover: hover) {
+  .feature-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .feature-card.is-visible:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/**
+ * Touch device fallback: tap to toggle active state
+ * Uses :active instead of :hover
+ */
+@media (hover: none) {
+  .feature-card:active {
+    transform: scale(0.98);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .feature-card[data-tap-active='true'] {
+    transform: scale(0.99);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.65),
+      0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  }
+
+  .feature-card[data-tap-active='true'] .inner-glow-overlay {
+    opacity: 1;
+  }
+
+  .feature-card[data-tap-active='true'] .feature-card__icon-shell {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .feature-card[data-tap-active='true'] .feature-card__description {
+    color: rgba(229, 231, 235, 0.95);
+  }
+
+  .feature-card[data-tap-active='true'] .feature-card__cta {
+    color: rgba(167, 139, 250, 1);
+  }
+}
+
+/**
+ * Focus state for keyboard navigation
+ */
+.feature-card:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 4px;
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* ============================================
+   Bento Grid Layout
+   ============================================ */
+
+/**
+ * Base grid container
+ * Responsive breakpoints for optimal card display
+ */
+.bento-grid {
+  /* Grid auto-flow for dynamic card sizes */
+  grid-auto-flow: dense;
+}
+
+/**
+ * Mobile: Single column stack
+ */
+@media (max-width: 767px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Remove any desktop grid spans on mobile */
+  .feature-card {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+}
+
+/**
+ * Tablet: Two columns
+ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/**
+ * Desktop: Three columns with custom spans
+ */
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Support for custom grid spans from data */
+  .feature-card[data-span='2'] {
+    grid-column: span 2;
+  }
+
+  .feature-card[data-span='3'] {
+    grid-column: span 3;
+  }
+
+  .feature-card[data-row-span='2'] {
+    grid-row: span 2;
+  }
+}
+
+/* ============================================
+   Glass Surface Enhancements
+   ============================================ */
+
+/**
+ * Additional glass effect for feature cards
+ * Builds on .glass-surface utility from Tailwind
+ */
+.feature-card.glass-surface {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 10, 10, 0.7) 0%,
+    rgba(10, 10, 10, 0.5) 100%
+  );
+}
+
+/**
+ * Inner glow effect on hover
+ */
+.feature-card:hover .inner-glow-overlay {
+  opacity: 1;
+}
+
+/* ============================================
+   Accessibility: Reduced Motion
+   ============================================ */
+
+/**
+ * Disable animations for users who prefer reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  .feature-card,
+  .feature-card.is-visible,
+  .feature-card:hover {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  /* Keep only essential focus transitions */
+  .feature-card:focus-visible {
+    transition: outline-color 200ms ease;
+  }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+/**
+ * Optimize bento grid for print
+ */
+@media print {
+  .feature-card {
+    opacity: 1;
+    transform: none;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .feature-card.glass-surface {
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+
+  /* Simplify grid for print */
+  .bento-grid {
+    display: block;
+  }
+
+  .feature-card {
+    margin-bottom: 1rem;
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+}
+
+/* ============================================
+   High Contrast Mode
+   ============================================ */
+
+/**
+ * Enhance visibility in forced-colors mode (Windows High Contrast)
+ */
+@media (forced-colors: active) {
+  .feature-card {
+    border: 2px solid CanvasText;
+  }
+
+  .feature-card:hover,
+  .feature-card:focus-visible {
+    border-color: Highlight;
+  }
+
+  /* Ensure icon containers are visible */
+  .feature-card .glass-surface {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* ============================================
+   Performance Optimizations
+   ============================================ */
+
+/**
+ * Use GPU acceleration for transforms
+ */
+.feature-card {
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/**
+ * Contain paint/layout for better rendering performance
+ */
+.bento-grid {
+  contain: layout style paint;
+}

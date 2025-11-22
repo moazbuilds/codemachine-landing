@@ -22,6 +22,7 @@ import { ExperienceShell } from '@/components/ExperienceShell'
 import { HeroCommandPanel } from '@/components/HeroCommandPanel'
 import { VisualSimulationWindow } from '@/components/VisualSimulationWindow'
 import { MobileCard } from '@/components/VisualSimulationWindow/MobileCard'
+import { FeatureBentoGrid } from '@/components/FeatureBentoGrid'
 import '@/styles/hero.css'
 
 type ShellSection = {
@@ -86,10 +87,13 @@ function App() {
       <VisualSimulationWindow />
       <MobileCard />
 
+      {/* Feature Bento Grid - Live Implementation (I3.T1) */}
+      <FeatureBentoGrid />
+
       {/* Remaining Sections - Placeholders */}
       <div className="mx-auto flex max-w-5xl flex-col gap-6 py-10">
         {shellSections
-          .filter((section) => section.id !== 'simulation')
+          .filter((section) => section.id !== 'simulation' && section.id !== 'features')
           .map((section) => (
             <section
               key={section.id}
