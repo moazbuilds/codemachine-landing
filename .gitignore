@@ -1,0 +1,12 @@
+.codemachine/logs
+.codemachine/memory
+.codemachine/prompts
+.codemachine/agents
+.codemachine/template.json
+node_modules
+*cache/
+*.cache
+__pycache__/
+*.log
+*.tmp
+*.swp
