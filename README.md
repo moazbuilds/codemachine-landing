@@ -98,6 +98,35 @@ pnpm run test:perf    # Lighthouse CI budgets
 pnpm run analyze      # Bundle analyzer (Vite visualizer)
 ```
 
+<!-- anchor: deployment -->
+## 🚢 Deployment & Delivery
+
+### GitHub Actions CI
+
+- Automated via [`ci.yml`](.github/workflows/ci.yml) which runs `pnpm install --frozen-lockfile`, lint, unit, Playwright, build, and Lighthouse gates on pushes + PRs to `main`.
+- Playwright browsers are installed with `pnpm exec playwright install --with-deps`; set `PLAYWRIGHT_BROWSERS_PATH=0` locally to mirror CI caching.
+- Debug workflow issues locally with [`act`](https://github.com/nektos/act): `act pull_request -j quality`.
+
+### Vercel (Primary)
+
+1. Authenticate: `vercel login` then `vercel link`.
+2. Pull env + project settings: `vercel pull --yes --environment=preview`.
+3. Build locally using repo config: `vercel build` (driven by [`vercel.json`](vercel.json)).
+4. Deploy: `vercel deploy --prebuilt` for previews; `vercel deploy --prebuilt --prod` once CI is green.
+
+### Netlify (Fallback)
+
+1. Install CLI: `npm i -g netlify-cli`.
+2. Link site: `netlify link`.
+3. Deploy via [`netlify.toml`](netlify.toml):
+   - Preview: `netlify deploy --build --message "preview"`.
+   - Production: `netlify deploy --prod`.
+4. Verify response headers match config (HSTS + `X-Content-Type-Options`).
+
+### Docker / Local Parity
+
+Use the [Docker Support](#-docker-support) steps for parity builds. CI and hosting configs assume Node 20 + pnpm 9; keep Docker images updated to avoid drift.
+
 <!-- anchor: core-architecture -->
 ## 🏗️ Architecture & Component Overview
 
@@ -175,7 +204,7 @@ This project maintains living architectural documentation:
 - **[Data Model ERD](docs/diagrams/data_model_erd.puml)** (PlantUML) — Captures typed content entities and their relationships
 - **[Journey Sequence Diagram](docs/diagrams/journey_install_sequence.puml)** (PlantUML) — Documents the hero → copy → telemetry flow
 - **[GitHub Integration Spec](api/github_star_fetch.md)** (Markdown) — Defines API contract, caching, fallback semantics
-- **Verification Checklist** (Markdown) — CI/Lighthouse/Playwright gates *(Planned: I3.T4)*
+- **[Verification Checklist](docs/adr/verification_checklist.md)** (Markdown) — CI, Lighthouse, Playwright, and deployment gates for releases
 
 ## 🎨 Aura Design System
 
@@ -315,8 +344,36 @@ docker run -p 3000:3000 -v $(pwd):/app codemachine-dev
 - **Custom Plugin:** Adds `.glass-card`, `.text-glow`, `.focus-ring`, `.inner-glow` utilities
 - **Extended Theme:** Custom spacing, colors, fonts, animations, and keyframes
 
+<!-- anchor: env-variables -->
+## 🔐 Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `VITE_GITHUB_TOKEN` | Optional (recommended for CI/Prod) | _unset_ | Personal access token for GitHub star fetches; prevents 60/hr unauthenticated limit. |
+| `VITE_GITHUB_STARS_TTL_HOURS` | No | `6` | Overrides cache TTL for GitHub metrics (must be positive integer). |
+| `VITE_ANALYTICS_ENDPOINT` | Optional | _unset_ | PostHog (or compatible) endpoint to receive Aura analytics events. |
+| `PLAYWRIGHT_BROWSERS_PATH` | CI only | `0` | Ensures browsers install inside workspace for cache hits during CI. |
+
+Create `.env.local` (ignored by git) for local development:
+
+```bash
+touch .env.local
+echo "VITE_GITHUB_TOKEN=ghp_example" >> .env.local
+echo "VITE_ANALYTICS_ENDPOINT=https://posthog.example.com/capture" >> .env.local
+```
+
+> Hosting configs inherit these variables: see [`vercel.json`](vercel.json) secrets mapping and `[build.environment]` inside [`netlify.toml`](netlify.toml).
+
 <!-- anchor: troubleshooting -->
 ## 🔧 Troubleshooting
+
+### CI / Deployment Issues
+
+- **Workflow fails before tests:** Ensure `pnpm` matches `packageManager` (`pnpm -v` → `9.0.0`), then rerun `pnpm install --frozen-lockfile` locally to mimic CI.
+- **Playwright cannot find browsers:** Set `PLAYWRIGHT_BROWSERS_PATH=0 pnpm exec playwright install --with-deps` (mirrors `.github/workflows/ci.yml`).
+- **Vercel preview missing env vars:** Run `vercel pull` to sync project + secret references defined in [`vercel.json`](vercel.json).
+- **Netlify deploy uses stale cache:** `netlify deploy --build --clear-cache` respects `[build.environment]` from [`netlify.toml`](netlify.toml).
+- **Need full gate status:** Check the [verification checklist](docs/adr/verification_checklist.md) for owners, cadence, and sign-off requirements before retrying CI.
 
 ### Common Issues
 
