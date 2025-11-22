@@ -17,6 +17,10 @@ export type HeroContent = {
     secondary: string
   }
   telemetryLabel: string
+  installCommand: string
+  startCommand?: string
+  betaLabel?: string
+  docsUrl: string
 }
 
 export type ExternalLink = {

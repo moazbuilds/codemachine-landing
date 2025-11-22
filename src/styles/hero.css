@@ -1,0 +1,215 @@
+/**
+ * Hero Component Styles
+ * Task: I2.T1 - HeroCommandPanel Implementation
+ *
+ * Provides animations, transitions, and responsive overrides for the HeroCommandPanel.
+ * Includes IntersectionObserver fade-in, command bar interactions, and reduced-motion support.
+ *
+ * Accessibility:
+ * - Respects prefers-reduced-motion
+ * - Maintains focus-visible states
+ * - Ensures sufficient color contrast
+ */
+
+/* ============================================
+   Hero Section Animation
+   ============================================ */
+
+/**
+ * Initial state: hidden and slightly translated down
+ * IntersectionObserver adds .is-visible class to trigger animation
+ */
+.hero-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/**
+ * Visible state: full opacity and original position
+ */
+.hero-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/**
+ * Stagger child elements for sequential reveal
+ */
+.hero-section.is-visible > div > * {
+  animation: fadeInUp 600ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.hero-section.is-visible > div > *:nth-child(1) {
+  animation-delay: 100ms;
+}
+
+.hero-section.is-visible > div > *:nth-child(2) {
+  animation-delay: 200ms;
+}
+
+.hero-section.is-visible > div > *:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+.hero-section.is-visible > div > *:nth-child(4) {
+  animation-delay: 400ms;
+}
+
+.hero-section.is-visible > div > *:nth-child(5) {
+  animation-delay: 500ms;
+}
+
+.hero-section.is-visible > div > *:nth-child(6) {
+  animation-delay: 600ms;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   Command Bar Interactions
+   ============================================ */
+
+/**
+ * Command bar container with hover elevation
+ */
+.command-bar-container .glass-surface {
+  transition:
+    box-shadow 200ms ease,
+    border-color 200ms ease,
+    transform 200ms ease;
+}
+
+.command-bar-container .glass-surface:hover {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.command-bar-container .glass-surface:focus-within {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 0 2px rgba(139, 92, 246, 0.3);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+/**
+ * Command text focus state
+ */
+.command-bar-container code:focus {
+  outline: none;
+  color: theme('colors.primary.400');
+}
+
+.command-bar-container code::selection {
+  background-color: rgba(139, 92, 246, 0.3);
+  color: theme('colors.primary.400');
+}
+
+/* ============================================
+   Responsive Typography
+   ============================================ */
+
+/**
+ * Scale down hero headline on mobile devices
+ */
+@media (max-width: 640px) {
+  .hero-section .heading-hero {
+    font-size: 2.5rem;
+    line-height: 1.15;
+  }
+
+  .hero-section .command-bar-container code {
+    font-size: 0.8125rem;
+  }
+}
+
+/**
+ * Optimize spacing on tablet devices
+ */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .hero-section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+/* ============================================
+   Accessibility: Reduced Motion
+   ============================================ */
+
+/**
+ * Disable animations for users who prefer reduced motion
+ */
+@media (prefers-reduced-motion: reduce) {
+  .hero-section,
+  .hero-section.is-visible,
+  .hero-section.is-visible > div > * {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .command-bar-container .glass-surface {
+    transition: none !important;
+  }
+}
+
+/* ============================================
+   Print Styles
+   ============================================ */
+
+/**
+ * Optimize hero section for print
+ */
+@media print {
+  .hero-section {
+    opacity: 1;
+    transform: none;
+    padding: 2rem 0;
+  }
+
+  .hero-section .command-bar-container .glass-surface {
+    background: white;
+    border: 1px solid #ccc;
+    box-shadow: none;
+  }
+
+  .hero-section .btn-primary {
+    display: none;
+  }
+}
+
+/* ============================================
+   High Contrast Mode
+   ============================================ */
+
+/**
+ * Enhance visibility in forced-colors mode (Windows High Contrast)
+ */
+@media (forced-colors: active) {
+  .hero-section .glass-surface {
+    border: 1px solid CanvasText;
+  }
+
+  .hero-section .btn-primary {
+    border: 2px solid ButtonText;
+  }
+
+  .hero-section code {
+    border: 1px solid CanvasText;
+  }
+}

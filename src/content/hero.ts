@@ -17,4 +17,8 @@ export const heroContent: HeroContent = {
     secondary: 'Learn More',
   },
   telemetryLabel: 'Build Status: Ready • Framework: React 18 • Bundler: Vite',
+  installCommand: 'npm install -g codemachine-cli',
+  startCommand: 'codemachine init',
+  betaLabel: 'Beta',
+  docsUrl: 'https://docs.codemachine.co',
 } as const

@@ -16,7 +16,7 @@ export const featureFlags: readonly FeatureFlag[] = [
   {
     key: 'clipboardInteractions',
     description: 'Allow HeroCommandPanel copy-to-clipboard action.',
-    enabled: false,
+    enabled: true,
   },
 ] as const
 

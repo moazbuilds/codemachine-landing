@@ -15,11 +15,12 @@
 import { useEffect } from 'react'
 import {
   featureCards,
-  heroContent,
   starMetrics,
   visualAssets,
 } from '@/content'
 import { ExperienceShell } from '@/components/ExperienceShell'
+import { HeroCommandPanel } from '@/components/HeroCommandPanel'
+import '@/styles/hero.css'
 
 type ShellSection = {
   id: string
@@ -36,13 +37,6 @@ const telemetrySummary = starMetrics
 const primaryVisualAsset = visualAssets[0]
 
 const shellSections: readonly ShellSection[] = [
-  {
-    id: 'hero',
-    label: 'HeroCommandPanel',
-    status: 'Planned: I2.T2',
-    description: heroContent.description,
-    detail: `CTA copy ready: ${heroContent.ctas.primary} / ${heroContent.ctas.secondary}`,
-  },
   {
     id: 'simulation',
     label: 'VisualSimulationWindow',
@@ -73,6 +67,9 @@ const shellSections: readonly ShellSection[] = [
 function App() {
   useEffect(() => {
     console.log(
+      '[Analytics Stub] App mounted with HeroCommandPanel active'
+    )
+    console.log(
       '[Analytics Stub] ExperienceShell sections pending render:',
       shellSections.map((section) => section.id)
     )
@@ -80,6 +77,10 @@ function App() {
 
   return (
     <ExperienceShell>
+      {/* Hero Section - Live Implementation (I2.T1) */}
+      <HeroCommandPanel />
+
+      {/* Remaining Sections - Placeholders */}
       <div className="mx-auto flex max-w-5xl flex-col gap-6 py-10">
         {shellSections.map((section) => (
           <section
